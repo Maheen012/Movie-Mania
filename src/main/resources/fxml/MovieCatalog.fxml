@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="15" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.MovieCatalogController">
+    <Label text="Movie Mania - Catalog" style="-fx-font-size: 24px;"/>
+    <Button text="Search Movies" onAction="#handleSearch"/>
+    <Button text="View Favorites" onAction="#handleFavorites"/>
+    <Button text="Watch History" onAction="#handleHistory"/>
+    <Button text="Logout" onAction="#handleLogout"/>
+</VBox>
