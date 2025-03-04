@@ -5,13 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class Main {
+public class GUI {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(Main::new);
+        SwingUtilities.invokeLater(GUI::new);
     }
 
-    public Main() {
+    public GUI() {
         JFrame frame = new JFrame("Movie Mania - Catalog");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300);
@@ -82,7 +82,7 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
                 watchHistoryFrame.dispose();
-                new Main();
+                new GUI();
             }
         });
 
