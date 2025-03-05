@@ -105,7 +105,7 @@ public class MovieManager {
     }
 
     public static void main(String[] args) {
-        String filePath = "movies.csv";
+        String filePath = "Movie-Mania/src/main/resources/movies.csv";
         MovieManager movieManager = new MovieManager();
 
         // Read movies from the file

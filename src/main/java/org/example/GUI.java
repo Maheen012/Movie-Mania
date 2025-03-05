@@ -16,7 +16,7 @@ public class GUI {
 
     public GUI() {
         movieManager = new MovieManager();
-        movieManager.readMovies("movies.csv");
+        movieManager.readMovies("Movie-Mania/src/main/resources/movies.csv");
 
         JFrame frame = new JFrame("Movie Mania - Catalog");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
