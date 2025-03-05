@@ -99,6 +99,11 @@ public class MovieManager {
         }
     }
 
+    // Method to get the list of movies
+    public List<Movie> getMovies() {
+        return movies;
+    }
+
     public static void main(String[] args) {
         String filePath = "movies.csv";
         MovieManager movieManager = new MovieManager();
