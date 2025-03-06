@@ -17,6 +17,7 @@ public class Movie {
         this.description = description;
     }
 
+    // Getters
     public String getTitle() {
         return title;
     }
@@ -40,4 +41,30 @@ public class Movie {
     public String getDescription() {
         return description;
     }
+
+    // Setters
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public void setMainCast(String mainCast) {
+        this.mainCast = mainCast;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
+
