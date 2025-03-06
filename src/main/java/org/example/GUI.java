@@ -8,8 +8,8 @@ import java.util.List;
 
 public class GUI {
 
-    private MovieManager movieManager;
-    private boolean isAdmin;
+    private MovieManager movieManager; // Manages movie data
+    private boolean isAdmin; // Tracks if the user is an admin or not
 
     // Main method to start the application
     public static void main(String[] args) {
@@ -19,24 +19,24 @@ public class GUI {
 
     // Constructor to initialize the GUI
     public GUI(boolean isAdmin) {
-        this.isAdmin = isAdmin;
-        movieManager = new MovieManager();
+        this.isAdmin = isAdmin; // Set admin status
+        movieManager = new MovieManager(); // Initialize MovieManager
         movieManager.readMovies("movies.csv"); // Load movies from CSV file
 
-        // Create the main frame
+        // Create the main application window (JFrame)
         JFrame frame = new JFrame("Movie Mania - " + (isAdmin ? "Admin Catalogue" : "User Catalogue"));
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300);
-        frame.setLayout(new BorderLayout());
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close the application when the window is closed
+        frame.setSize(400, 300); // Set window size
+        frame.setLayout(new BorderLayout()); // Use BorderLayout for the main layout
 
-        // Create and add the title label
+        // Create and add the title label to the top of the window
         JLabel lblTitle = new JLabel("Movie Mania", JLabel.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 24));
-        frame.add(lblTitle, BorderLayout.NORTH);
+        lblTitle.setFont(new Font("Arial", Font.BOLD, 24)); // Set font and size
+        frame.add(lblTitle, BorderLayout.NORTH); // Add label to the top (NORTH) of the window
 
-        // Create a panel for buttons
+        // Create a panel to hold buttons
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(4, 1, 10, 10));
+        buttonPanel.setLayout(new GridLayout(4, 1, 10, 10)); // Use GridLayout with 4 rows and 1 column
 
         // Check if the user is an admin or a regular user
         if (isAdmin) {
@@ -56,15 +56,26 @@ public class GUI {
             btnAddMovie.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    showAddMovieScreen(); // Show the screen to add a new movie
+                    showAddMovieScreen(); // Open the "Add Movie" screen
                 }
             });
 
-            // Delete Movie Button (Unimplemented)
+            // Delete Movie Functionality
             btnDeleteMovie.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Placeholder for future implementation
+                    // Prompt the admin to enter the movie title
+                    String movieTitle = JOptionPane.showInputDialog(frame, "Enter the title of the movie to delete:");
+                    if (movieTitle != null && !movieTitle.trim().isEmpty()) {
+                        boolean isDeleted = deleteMovieByTitle(movieTitle.trim()); // Delete the movie
+                        if (isDeleted) {
+                            JOptionPane.showMessageDialog(frame, "Movie deleted successfully!");
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "Movie not found!", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "No movies to be deleted.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 }
             });
 
@@ -102,7 +113,7 @@ public class GUI {
             btnViewMovies.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    showMovieTitlesScreen(); // Show the list of movies
+                    showMovieTitlesScreen(); // Open the "View Movies" screen
                 }
             });
 
@@ -133,17 +144,33 @@ public class GUI {
 
         }
 
-        // Add the button panel to the frame and make it visible
+        // Add the button panel to the center of the window
         frame.add(buttonPanel, BorderLayout.CENTER);
-        frame.setVisible(true);
+        frame.setVisible(true); // Make the window visible
+    }
+
+    // Method to delete a movie by title
+    private boolean deleteMovieByTitle(String title) {
+        List<Movie> movies = movieManager.getMovies(); // Get the list of movies
+        // Search for the movie by title
+        for (Movie movie : movies) {
+            if (movie.getTitle().equalsIgnoreCase(title)) {
+                // Remove the movie from the list
+                movies.remove(movie);
+                // Save the updated list to the CSV file
+                movieManager.saveMovies("movies.csv");
+                return true; // Movie found and deleted
+            }
+        }
+        return false; // Movie not found
     }
 
     // Method to show the screen for adding a new movie
     private void showAddMovieScreen() {
         JFrame addMovieFrame = new JFrame("Add Movie");
-        addMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        addMovieFrame.setSize(400, 400);
-        addMovieFrame.setLayout(new GridLayout(7, 2, 10, 10));
+        addMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window when done
+        addMovieFrame.setSize(400, 400); // Set window size
+        addMovieFrame.setLayout(new GridLayout(7, 2, 10, 10)); // Use GridLayout for the form
 
         // Create text fields and text area for movie details
         JTextField txtTitle = new JTextField();
@@ -152,9 +179,9 @@ public class GUI {
         JTextField txtRating = new JTextField();
         JTextField txtGenre = new JTextField();
         JTextArea txtDescription = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(txtDescription);
+        JScrollPane scrollPane = new JScrollPane(txtDescription); // Add scroll to the description field
 
-        // Add labels and text fields to the frame
+        // Add labels and text fields to the window
         addMovieFrame.add(new JLabel("Title:"));
         addMovieFrame.add(txtTitle);
         addMovieFrame.add(new JLabel("Year:"));
@@ -187,7 +214,7 @@ public class GUI {
                     movieManager.getMovies().add(newMovie);
                     movieManager.saveMovies("movies.csv"); // Save the updated list to CSV
 
-                    // Show success message and close the add movie frame
+                    // Show success message and close the add movie window
                     JOptionPane.showMessageDialog(addMovieFrame, "Movie added successfully!");
                     addMovieFrame.dispose();
                 } catch (NumberFormatException ex) {
@@ -197,8 +224,8 @@ public class GUI {
             }
         });
 
-        addMovieFrame.add(btnAdd);
-        addMovieFrame.setVisible(true);
+        addMovieFrame.add(btnAdd); // Add the button to the window
+        addMovieFrame.setVisible(true); // Make the window visible
     }
 
     // Your existing showUpdateMovieScreen method
@@ -326,22 +353,22 @@ public class GUI {
     // Method to show the screen with a list of movie titles
     private void showMovieTitlesScreen() {
         JFrame movieTitlesFrame = new JFrame("Movie Titles");
-        movieTitlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieTitlesFrame.setSize(600, 400);
-        movieTitlesFrame.setLayout(new BorderLayout());
+        movieTitlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window when done
+        movieTitlesFrame.setSize(600, 400); // Set window size
+        movieTitlesFrame.setLayout(new BorderLayout()); // Use BorderLayout for the main layout
 
-        // Create and add the title label
+        // Create and add the title label to the top of the window
         JLabel lblMovieTitles = new JLabel("Movies", JLabel.CENTER);
-        lblMovieTitles.setFont(new Font("Arial", Font.BOLD, 18));
-        movieTitlesFrame.add(lblMovieTitles, BorderLayout.NORTH);
+        lblMovieTitles.setFont(new Font("Arial", Font.BOLD, 18)); // Set font and size
+        movieTitlesFrame.add(lblMovieTitles, BorderLayout.NORTH); // Add label to the top (NORTH) of the window
 
         // Create a panel to display the list of movies
-        JPanel movieListPanel = new JPanel(new GridLayout(0, 3, 10, 10));
-        movieListPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel movieListPanel = new JPanel(new GridLayout(0, 3, 10, 10)); // Use GridLayout for the movie buttons
+        movieListPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding
 
         // Add a scroll pane to the movie list panel
         JScrollPane scrollPane = new JScrollPane(movieListPanel);
-        movieTitlesFrame.add(scrollPane, BorderLayout.CENTER);
+        movieTitlesFrame.add(scrollPane, BorderLayout.CENTER); // Add scroll pane to the center of the window
 
         // Get the list of movies from the MovieManager
         List<Movie> movies = movieManager.getMovies();
@@ -352,18 +379,18 @@ public class GUI {
             // Create a button for each movie and add it to the panel
             for (Movie movie : movies) {
                 JButton btnMovie = new JButton("<html><center>" + movie.getTitle() + "</center></html>");
-                btnMovie.setPreferredSize(new Dimension(100, 180));
-                btnMovie.setFont(new Font("Arial", Font.BOLD, 15));
-                btnMovie.setVerticalTextPosition(SwingConstants.BOTTOM);
-                btnMovie.setHorizontalTextPosition(SwingConstants.CENTER);
+                btnMovie.setPreferredSize(new Dimension(100, 180)); // Set button size
+                btnMovie.setFont(new Font("Arial", Font.BOLD, 15)); // Set font and size
+                btnMovie.setVerticalTextPosition(SwingConstants.BOTTOM); // Position text at the bottom
+                btnMovie.setHorizontalTextPosition(SwingConstants.CENTER); // Center the text
                 btnMovie.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         showMovieDetailsScreen(movie); // Show details of the selected movie
-                        movieTitlesFrame.dispose(); // Close the movie titles frame
+                        movieTitlesFrame.dispose(); // Close the movie titles window
                     }
                 });
-                movieListPanel.add(btnMovie);
+                movieListPanel.add(btnMovie); // Add the button to the panel
             }
         }
 
@@ -372,32 +399,32 @@ public class GUI {
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                movieTitlesFrame.dispose(); // Close the movie titles frame
+                movieTitlesFrame.dispose(); // Close the movie titles window
             }
         });
-        movieTitlesFrame.add(btnBack, BorderLayout.SOUTH);
+        movieTitlesFrame.add(btnBack, BorderLayout.SOUTH); // Add button to the bottom (SOUTH) of the window
 
-        movieTitlesFrame.setVisible(true);
+        movieTitlesFrame.setVisible(true); // Make the window visible
     }
 
     // Method to show the screen with details of a selected movie
     private void showMovieDetailsScreen(Movie movie) {
         JFrame movieDetailsFrame = new JFrame(movie.getTitle());
-        movieDetailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieDetailsFrame.setSize(500, 400);
-        movieDetailsFrame.setLayout(new BorderLayout());
+        movieDetailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window when done
+        movieDetailsFrame.setSize(500, 400); // Set window size
+        movieDetailsFrame.setLayout(new BorderLayout()); // Use BorderLayout for the main layout
 
-        // Create and add the title label
+        // Create and add the title label to the top of the window
         JLabel lblMovieDetails = new JLabel(movie.getTitle(), JLabel.CENTER);
-        lblMovieDetails.setFont(new Font("Arial", Font.BOLD, 24));
-        movieDetailsFrame.add(lblMovieDetails, BorderLayout.NORTH);
+        lblMovieDetails.setFont(new Font("Arial", Font.BOLD, 24)); // Set font and size
+        movieDetailsFrame.add(lblMovieDetails, BorderLayout.NORTH); // Add label to the top (NORTH) of the window
 
         // Create a text area to display movie details
         JTextArea txtMovieDetails = new JTextArea();
-        txtMovieDetails.setEditable(false);
-        txtMovieDetails.setLineWrap(true);
-        txtMovieDetails.setWrapStyleWord(true);
-        txtMovieDetails.setFont(new Font("Arial", Font.PLAIN, 14));
+        txtMovieDetails.setEditable(false); // Make the text area read-only
+        txtMovieDetails.setLineWrap(true); // Enable line wrapping
+        txtMovieDetails.setWrapStyleWord(true); // Wrap at word boundaries
+        txtMovieDetails.setFont(new Font("Arial", Font.PLAIN, 14)); // Set font and size
         txtMovieDetails.setText(
                 "Year: " + movie.getYear() + "\n" +
                         "Main Cast: " + movie.getMainCast() + "\n" +
@@ -408,19 +435,19 @@ public class GUI {
 
         // Add a scroll pane to the text area
         JScrollPane scrollPane = new JScrollPane(txtMovieDetails);
-        movieDetailsFrame.add(scrollPane, BorderLayout.CENTER);
+        movieDetailsFrame.add(scrollPane, BorderLayout.CENTER); // Add scroll pane to the center of the window
 
         // Add a back button to return to the movie titles screen
         JButton btnBack = new JButton("Back to Movie Titles");
         btnBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                movieDetailsFrame.dispose(); // Close the movie details frame
-                showMovieTitlesScreen(); // Show the movie titles screen
+                movieDetailsFrame.dispose(); // Close the movie details window
+                showMovieTitlesScreen(); // Open the movie titles screen
             }
         });
-        movieDetailsFrame.add(btnBack, BorderLayout.SOUTH);
+        movieDetailsFrame.add(btnBack, BorderLayout.SOUTH); // Add button to the bottom (SOUTH) of the window
 
-        movieDetailsFrame.setVisible(true);
+        movieDetailsFrame.setVisible(true); // Make the window visible
     }
 }
