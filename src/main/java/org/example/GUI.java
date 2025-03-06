@@ -72,9 +72,10 @@ public class GUI {
             btnUpdateMovie.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // Placeholder for future implementation
+                    showUpdateMovieScreen();
                 }
             });
+
 
             // Sign Out Functionality
             btnSignOut.addActionListener(new ActionListener() {
@@ -129,6 +130,7 @@ public class GUI {
                     new GUI(true); // Switch to admin catalogue
                 }
             });
+
         }
 
         // Add the button panel to the frame and make it visible
@@ -198,6 +200,128 @@ public class GUI {
         addMovieFrame.add(btnAdd);
         addMovieFrame.setVisible(true);
     }
+
+    // Your existing showUpdateMovieScreen method
+    private void showUpdateMovieScreen() {
+        JFrame updateMovieFrame = new JFrame("Update Movie");
+        updateMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        updateMovieFrame.setSize(400, 400);
+        updateMovieFrame.setLayout(new GridLayout(3, 2, 10, 10));
+
+        // Input field to search for the movie
+        JTextField txtSearchTitle = new JTextField();
+        JButton btnSearch = new JButton("Search");
+
+        updateMovieFrame.add(new JLabel("Enter Title to Update:"));
+        updateMovieFrame.add(txtSearchTitle);
+        updateMovieFrame.add(btnSearch);
+
+        // Action Listener for the Search Button
+        btnSearch.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String searchTitle = txtSearchTitle.getText().trim();
+                System.out.println("Search Button Clicked! Searching for: " + searchTitle); // Debugging line
+
+                if (searchTitle.isEmpty()) {
+                    JOptionPane.showMessageDialog(updateMovieFrame, "Please enter a title.");
+                    return;
+                }
+
+                Movie movieToUpdate = null;
+
+                // Debug: Check if movieManager is valid and has movies
+                System.out.println("Movies available: " + movieManager.getMovies().size()); // Debugging line
+
+                // Look for the movie in the list
+                for (Movie movie : movieManager.getMovies()) {
+                    if (movie.getTitle().equalsIgnoreCase(searchTitle)) {
+                        movieToUpdate = movie;
+                        break;
+                    }
+                }
+
+                if (movieToUpdate == null) {
+                    JOptionPane.showMessageDialog(updateMovieFrame, "Movie not found!");
+                    return;
+                }
+
+                // Close the search frame and open the update screen
+                updateMovieFrame.dispose(); // Close the current search frame
+                showEditMovieScreen(movieToUpdate); // Show the edit screen with movie details
+            }
+        });
+
+        updateMovieFrame.setVisible(true);
+    }
+
+    private void showEditMovieScreen(Movie movieToUpdate) {
+        JFrame editMovieFrame = new JFrame("Edit Movie - " + movieToUpdate.getTitle());
+        editMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        editMovieFrame.setSize(400, 500);
+        editMovieFrame.setLayout(new GridLayout(8, 2, 10, 10));
+
+        // Pre-filled input fields with existing data
+        JTextField txtTitle = new JTextField(movieToUpdate.getTitle());
+        JTextField txtYear = new JTextField(String.valueOf(movieToUpdate.getYear()));
+        JTextField txtMainCast = new JTextField(movieToUpdate.getMainCast());
+        JTextField txtRating = new JTextField(String.valueOf(movieToUpdate.getRating()));
+        JTextField txtGenre = new JTextField(movieToUpdate.getGenre());
+        JTextArea txtDescription = new JTextArea(movieToUpdate.getDescription());
+        JScrollPane scrollPane = new JScrollPane(txtDescription);
+
+        // Add labels and text fields
+        editMovieFrame.add(new JLabel("Title:"));
+        editMovieFrame.add(txtTitle);
+        editMovieFrame.add(new JLabel("Year:"));
+        editMovieFrame.add(txtYear);
+        editMovieFrame.add(new JLabel("Main Cast:"));
+        editMovieFrame.add(txtMainCast);
+        editMovieFrame.add(new JLabel("Rating:"));
+        editMovieFrame.add(txtRating);
+        editMovieFrame.add(new JLabel("Genre:"));
+        editMovieFrame.add(txtGenre);
+        editMovieFrame.add(new JLabel("Description:"));
+        editMovieFrame.add(scrollPane);
+
+        // Button to save changes
+        JButton btnSave = new JButton("Save Changes");
+        btnSave.addActionListener(e -> {
+            try {
+                // Get new values from the input fields
+                String newTitle = txtTitle.getText().trim();
+                int newYear = Integer.parseInt(txtYear.getText().trim());
+                String newMainCast = txtMainCast.getText().trim();
+                double newRating = Double.parseDouble(txtRating.getText().trim());
+                String newGenre = txtGenre.getText().trim();
+                String newDescription = txtDescription.getText().trim();
+
+                // Update the movie object using setters
+                movieToUpdate.setTitle(newTitle);
+                movieToUpdate.setYear(newYear);
+                movieToUpdate.setMainCast(newMainCast);
+                movieToUpdate.setRating(newRating);
+                movieToUpdate.setGenre(newGenre);
+                movieToUpdate.setDescription(newDescription);
+
+                // Save the updated movie list to CSV
+                movieManager.saveMovies("movies.csv");
+
+                JOptionPane.showMessageDialog(editMovieFrame, "Movie updated successfully!");
+                editMovieFrame.dispose(); // Close the edit movie screen
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(editMovieFrame, "Invalid input. Please check the fields.");
+            }
+        });
+
+        // Add the save button at the end
+        editMovieFrame.add(new JLabel());  // Empty cell for alignment
+        editMovieFrame.add(btnSave);
+
+        editMovieFrame.setVisible(true);
+    }
+
+
 
     // Method to show the screen with a list of movie titles
     private void showMovieTitlesScreen() {
