@@ -44,12 +44,14 @@ public class GUI {
             JButton btnAddMovie = new JButton("Add Movie");
             JButton btnDeleteMovie = new JButton("Delete Movie");
             JButton btnUpdateMovie = new JButton("Update Movie");
+            JButton btnViewMovies = new JButton("View Movies");
             JButton btnSignOut = new JButton("Sign Out");
 
             // Add buttons to the panel
             buttonPanel.add(btnAddMovie);
             buttonPanel.add(btnDeleteMovie);
             buttonPanel.add(btnUpdateMovie);
+            buttonPanel.add(btnViewMovies);
             buttonPanel.add(btnSignOut);
 
             // Add Movie Functionality
@@ -79,7 +81,7 @@ public class GUI {
                 }
             });
 
-            // Update Movie Button (Unimplemented)
+            // Update Movie Button
             btnUpdateMovie.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -87,6 +89,13 @@ public class GUI {
                 }
             });
 
+            // View Movies Functionality
+            btnViewMovies.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    showMovieTitlesScreen(); // Show the movie titles screen for admin
+                }
+            });
 
             // Sign Out Functionality
             btnSignOut.addActionListener(new ActionListener() {
