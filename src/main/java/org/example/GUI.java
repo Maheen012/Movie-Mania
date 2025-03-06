@@ -13,6 +13,13 @@ public class GUI {
 
     // Main method to start the application
     public static void main(String[] args) {
+        // Start with the login screen
+        LoginGUI login = new LoginGUI();
+        boolean isAdmin = login.isAdmin(); // Get role from login
+
+        // Launch the main application
+        SwingUtilities.invokeLater(() -> new GUI(isAdmin));
+
         // Use SwingUtilities.invokeLater to ensure GUI creation is done on the Event Dispatch Thread
         SwingUtilities.invokeLater(() -> new GUI(true)); // Start with admin view
     }
@@ -21,7 +28,7 @@ public class GUI {
     public GUI(boolean isAdmin) {
         this.isAdmin = isAdmin; // Set admin status
         movieManager = new MovieManager(); // Initialize MovieManager
-        movieManager.readMovies("movies.csv"); // Load movies from CSV file
+        movieManager.readMovies("Movie-Mania/src/main/resources/movies.csv"); // Load movies from CSV file
 
         // Create the main application window (JFrame)
         JFrame frame = new JFrame("Movie Mania - " + (isAdmin ? "Admin Catalogue" : "User Catalogue"));
