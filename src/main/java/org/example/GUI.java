@@ -9,7 +9,7 @@ import java.util.List;
 public class GUI {
 
     private MovieManager movieManager; // Manages movie data
-    private boolean isAdmin; // Tracks if the user is an admin or not
+    private boolean isAdmin = false; // Tracks if the user is an admin or not
 
     // Main method to start the application
     public static void main(String[] args) {
@@ -21,7 +21,7 @@ public class GUI {
         SwingUtilities.invokeLater(() -> new GUI(isAdmin));
 
         // Use SwingUtilities.invokeLater to ensure GUI creation is done on the Event Dispatch Thread
-        SwingUtilities.invokeLater(() -> new GUI(true)); // Start with admin view
+        //SwingUtilities.invokeLater(() -> new GUI(true)); // Start with admin view
     }
 
     // Constructor to initialize the GUI
@@ -109,10 +109,10 @@ public class GUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     frame.dispose(); // Close the current window
-                    new GUI(false); // Switch to user catalogue
+                    System.exit(0); // Completely terminate the program
                 }
             });
-        } else {
+        } else if(!isAdmin){
             // User Catalogue Buttons
             JButton btnViewMovies = new JButton("View Movies");
             JButton btnViewFavorites = new JButton("View Favorites");
@@ -154,7 +154,7 @@ public class GUI {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     frame.dispose(); // Close the current window
-                    new GUI(true); // Switch to admin catalogue
+                    System.exit(0);//leaves the program when you sign out
                 }
             });
 
@@ -174,7 +174,7 @@ public class GUI {
                 // Remove the movie from the list
                 movies.remove(movie);
                 // Save the updated list to the CSV file
-                movieManager.saveMovies("movies.csv");
+                movieManager.saveMovies("Movie-Mania/src/main/resources/movies.csv");
                 return true; // Movie found and deleted
             }
         }

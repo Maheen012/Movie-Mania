@@ -11,7 +11,20 @@ import java.util.Map;
 public class LoginGUI {
     private boolean isAdmin;
     private boolean isAuthenticated;
-    private static final String CSV_FILE = "Movie-Mania/src/main/resources/UserPass.csv"; // File to store credentials
+    private static final String CSV_FILE = "Movie-Mania/src/main/resources/UserPass.csv";
+
+    // Ensure the file exists
+    static {
+        File file = new File(CSV_FILE);
+        if (!file.exists()) {
+            try {
+                file.getParentFile().mkdirs(); // Create parent directories if they don't exist
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     public LoginGUI() {
         isAuthenticated = false;
