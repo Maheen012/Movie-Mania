@@ -174,7 +174,7 @@ public class GUI {
                 // Remove the movie from the list
                 movies.remove(movie);
                 // Save the updated list to the CSV file
-                movieManager.saveMovies("movies.csv");
+                movieManager.saveMovies("Movie-Mania/src/main/resources/movies.csv");
                 return true; // Movie found and deleted
             }
         }
