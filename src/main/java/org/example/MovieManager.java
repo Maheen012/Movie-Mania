@@ -93,13 +93,10 @@ public class MovieManager {
                 writer.writeNext(movieData);
             }
 
-            System.out.println("Movie data saved to file!");
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
     // Method to get the list of movies
     public List<Movie> getMovies() {
         return movies;

@@ -204,14 +204,30 @@ public class GUI {
         btnAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String title = txtTitle.getText().trim();
+                String mainCast = txtMainCast.getText().trim();
+                String genre = txtGenre.getText().trim();
+                String description = txtDescription.getText().trim();
+
+                // Validation for empty fields
+                if (title.isEmpty() || mainCast.isEmpty() || genre.isEmpty() || description.isEmpty()) {
+                    JOptionPane.showMessageDialog(addMovieFrame, "Please fill in all fields.");
+                    return;
+                }
+
                 try {
-                    // Get input values from text fields
-                    String title = txtTitle.getText();
-                    int year = Integer.parseInt(txtYear.getText());
-                    String mainCast = txtMainCast.getText();
-                    double rating = Double.parseDouble(txtRating.getText());
-                    String genre = txtGenre.getText();
-                    String description = txtDescription.getText();
+                    int year = Integer.parseInt(txtYear.getText().trim());
+                    double rating = Double.parseDouble(txtRating.getText().trim());
+
+                    // Check if year and rating are valid
+                    if (year < 1900 || year > 2100) {
+                        JOptionPane.showMessageDialog(addMovieFrame, "Please enter a valid year.");
+                        return;
+                    }
+                    if (rating < 0 || rating > 10) {
+                        JOptionPane.showMessageDialog(addMovieFrame, "Please enter a valid rating between 0 and 10.");
+                        return;
+                    }
 
                     // Create a new Movie object and add it to the list
                     Movie newMovie = new Movie(title, year, mainCast, rating, genre, description);
@@ -220,7 +236,7 @@ public class GUI {
 
                     // Show success message and close the add movie window
                     JOptionPane.showMessageDialog(addMovieFrame, "Movie added successfully!");
-                    addMovieFrame.dispose();
+                    addMovieFrame.dispose(); // Close the add movie window
                 } catch (NumberFormatException ex) {
                     // Show error message if input is invalid
                     JOptionPane.showMessageDialog(addMovieFrame, "Invalid input. Please check the fields.");

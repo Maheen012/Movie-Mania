@@ -26,7 +26,7 @@ public class LoginGUI {
         isAdmin = false; // Initialize admin status to false
 
         // Create the main login/sign-up frame
-        JFrame frame = new JFrame("Login / Sign Up");
+        JFrame frame = new JFrame("Movie Mania");
         frame.setSize(350, 250); // Set the size of the frame
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Close the application when the window is closed
         frame.setLayout(new GridLayout(3, 1, 10, 10)); // Use a grid layout with 3 rows and 1 column
@@ -232,21 +232,33 @@ public class LoginGUI {
         return false; // Username is available
     }
 
-    // Method to save new user credentials to the UserPass.csv file
-    private void saveUserCredentials(String username, String password) {
-        File file = getFilePath(); // Get the path to the UserPass.csv file
-        if (file == null) return; // Exit if the file is not found
+    // Method to save user credentials (username, password) to the CSV file
+    public void saveUserCredentials(String username, String password) {
+        File userFile = getFilePath();
+        if (userFile == null) return;
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(file, true))) {
-            // If the file is empty, write the header
-            if (file.length() == 0) {
-                writer.writeNext(new String[]{"Username", "Password"});
+        // Check if the user file exists to determine if we are appending or writing new
+        boolean fileExists = userFile.exists();
+
+        // If the username is already taken, don't append
+        if (isUsernameTaken(username)) {
+            return; // Return early if the username is already taken
+        }
+
+        try (CSVWriter writer = new CSVWriter(new FileWriter(userFile, true))) { // true enables append mode
+            // Write the header only if the file doesn't already exist
+            if (!fileExists) {
+                String[] header = {"Username", "Password"};
+                writer.writeNext(header);
             }
-            // Write the new user's credentials to the file
+
+            // Save the user credentials (username, password)
             String[] userData = {username, password};
             writer.writeNext(userData);
+
         } catch (IOException e) {
-            e.printStackTrace(); // Handle file writing errors
+            e.printStackTrace();
         }
     }
+
 }
