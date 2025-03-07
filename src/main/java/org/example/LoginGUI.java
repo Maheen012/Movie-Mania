@@ -1,30 +1,23 @@
+
 package org.example;
 
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
+import com.opencsv.exceptions.CsvException;
+import com.opencsv.exceptions.CsvValidationException;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 
 public class LoginGUI {
     private boolean isAdmin;
     private boolean isAuthenticated;
-    private static final String CSV_FILE = "Movie-Mania/src/main/resources/UserPass.csv";
-
-    // Ensure the file exists
-    static {
-        File file = new File(CSV_FILE);
-        if (!file.exists()) {
-            try {
-                file.getParentFile().mkdirs(); // Create parent directories if they don't exist
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     public LoginGUI() {
         isAuthenticated = false;
@@ -91,11 +84,13 @@ public class LoginGUI {
                 String username = txtUsername.getText();
                 String password = new String(txtPassword.getPassword());
 
+                // Check if username is already taken
                 if (isUsernameTaken(username)) {
                     JOptionPane.showMessageDialog(frame, "Username already taken!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else if (username.isEmpty() || password.isEmpty()) {
                     JOptionPane.showMessageDialog(frame, "Username and password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
+                    // Save the new user credentials to the CSV file
                     saveUserCredentials(username, password);
                     JOptionPane.showMessageDialog(frame, "Sign up successful! You can now log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 }
@@ -114,21 +109,38 @@ public class LoginGUI {
         }
     }
 
+    private File getFilePath() {
+        // Load the UserPass.csv directly from the classpath (this is a special way of loading resource files)
+        URL getPathURL = getClass().getClassLoader().getResource("UserPass.csv");
+
+        // Check if movies.csv was found
+        if (getPathURL == null) {
+            System.out.println("UserPass file not found in resources. Using the file system.");
+        }
+
+        // Convert the URL to a File object if found in the classpath
+        try {
+            return new File(getPathURL.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean isAdmin() {
         return isAdmin;
     }
 
     private boolean authenticateUser(String username, String password) {
         // Read the CSV file and check for user credentials
-        try (BufferedReader reader = new BufferedReader(new FileReader(CSV_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] credentials = line.split(",");
+        File file = getFilePath();
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
+            String[] credentials;
+            while ((credentials = reader.readNext()) != null) {
                 if (credentials.length == 2 && credentials[0].equals(username) && credentials[1].equals(password)) {
                     return true;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
         return false;
@@ -136,25 +148,38 @@ public class LoginGUI {
 
     private boolean isUsernameTaken(String username) {
         // Read the CSV file and check if the username already exists
-        try (BufferedReader reader = new BufferedReader(new FileReader(CSV_FILE))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] credentials = line.split(",");
+        File file = getFilePath();
+        try (CSVReader reader = new CSVReader(new FileReader(file))) {
+            String[] credentials;
+            while ((credentials = reader.readNext()) != null) {
                 if (credentials.length == 2 && credentials[0].equals(username)) {
                     return true;
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | CsvValidationException e) {
             e.printStackTrace();
         }
         return false;
     }
 
+    // Save new user credentials to UserPass.csv
     private void saveUserCredentials(String username, String password) {
-        // Append the new user credentials to the CSV file
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(CSV_FILE, true))) {
-            writer.write(username + "," + password);
-            writer.newLine();
+        File file = getFilePath();
+        if (file == null) return;
+
+        // Create a User object
+        User newUser = new User(username, password);
+
+        try (CSVWriter writer = new CSVWriter(new FileWriter(file, true))) {
+            // If the file is empty, write the header
+            if (file.length() == 0) {
+                writer.writeNext(new String[]{"Username", "Password"});
+            }
+
+            // Write the new user's credentials to the file
+            String[] userData = {newUser.getUsername(), newUser.getPassword()};
+            writer.writeNext(userData);
+
         } catch (IOException e) {
             e.printStackTrace();
         }

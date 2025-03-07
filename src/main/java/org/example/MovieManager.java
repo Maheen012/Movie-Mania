@@ -3,24 +3,45 @@ package org.example;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
 import com.opencsv.CSVWriter;
-
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import com.opencsv.exceptions.CsvException;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MovieManager {
+    private List<Movie> movies;
 
-    // List to store movies
-    private List<Movie> movies = new ArrayList<>();
+    public MovieManager() {
+        this.movies = new ArrayList<>();
+    }
 
-    // Method to read all movie data from the CSV file, skipping the header
-    public void readMovies(String filePath) {
+    // Method to get the path of the movies.csv file
+    public File getMovieFilePath() {
+        // Load the movies.csv directly from the classpath (this is a special way of loading resource files)
+        URL getPathURL = getClass().getClassLoader().getResource("movies.csv");
+
+        // Check if movies.csv was found
+        if (getPathURL == null) {
+            System.out.println("Movies file not found in resources.");
+            return null;
+        }
+
+        // Convert the URL to a File
         try {
-            // Create a CSVReader instance
-            CSVReader reader = new CSVReaderBuilder(new FileReader(filePath)).build();
+            return new File(getPathURL.toURI());
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    // Method to read movies from the CSV file
+    public void readMovies() {
+        File movieFile = getMovieFilePath();
+        if (movieFile == null) return;
+
+        try (CSVReader reader = new CSVReaderBuilder(new FileReader(movieFile)).build()) {
             // Skip the header
             reader.readNext();
 
@@ -42,34 +63,17 @@ public class MovieManager {
                 movies.add(movie);
             }
 
-            // Close the reader
-            reader.close();
-
-        } catch (IOException e) {
+        } catch (IOException | CsvException e) {
             e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Method to print movie details
-    public void printMovieDetails() {
-        for (Movie movie : movies) {
-            System.out.println("Title: " + movie.getTitle()
-                    + ", Year: " + movie.getYear()
-                    + ", Main Cast: " + movie.getMainCast()
-                    + ", Rating: " + movie.getRating()
-                    + ", Genre: " + movie.getGenre()
-                    + ", Description: " + movie.getDescription());
         }
     }
 
     // Method to save movies to the CSV file
-    public void saveMovies(String filePath) {
-        try {
-            // Create a CSVWriter instance
-            CSVWriter writer = new CSVWriter(new FileWriter(filePath));
+    public void saveMovies() {
+        File movieFile = getMovieFilePath();
+        if (movieFile == null) return;
 
+        try (CSVWriter writer = new CSVWriter(new FileWriter(movieFile))) {
             // Write the header
             String[] header = {"Title", "Year", "Main Cast", "Rating", "Genre", "Description"};
             writer.writeNext(header);
@@ -89,9 +93,6 @@ public class MovieManager {
                 writer.writeNext(movieData);
             }
 
-            // Close the writer
-            writer.close();
-
             System.out.println("Movie data saved to file!");
 
         } catch (IOException e) {
@@ -104,21 +105,5 @@ public class MovieManager {
         return movies;
     }
 
-    public static void main(String[] args) {
-        String filePath = "Movie-Mania/src/main/resources/movies.csv";
-        MovieManager movieManager = new MovieManager();
-
-        // Read movies from the file
-        movieManager.readMovies(filePath);
-
-        // Example: Create a new movie object and add it to the list
-        //Movie newMovie = new Movie("New Movie", 2025, "Actor 1, Actor 2", 9.5, "Action", "An exciting new action movie.");
-        //movieManager.movies.add(newMovie); // Add the new movie to the list
-
-        // Save all movies (including the new one) to the file
-        //movieManager.saveMovies(filePath);
-
-        // Print movie details after saving the movies
-        //movieManager.printMovieDetails();
-    }
 }
+
