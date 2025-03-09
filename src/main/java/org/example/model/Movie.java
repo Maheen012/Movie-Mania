@@ -1,5 +1,8 @@
-package org.example;
+package org.example.model;
 
+/**
+ * The Movie class represents a movie with its details.
+ */
 public class Movie {
     private String title;
     private int year;
@@ -8,6 +11,16 @@ public class Movie {
     private String genre;
     private String description;
 
+    /**
+     * Constructor to initialize a Movie object with all the movie details.
+     *
+     * @param title The title of the movie.
+     * @param year The release year of the movie.
+     * @param mainCast The main cast of the movie.
+     * @param rating The rating of the movie.
+     * @param genre The genre of the movie.
+     * @param description A brief description of the movie.
+     */
     public Movie(String title, int year, String mainCast, double rating, String genre, String description) {
         this.title = title;
         this.year = year;
