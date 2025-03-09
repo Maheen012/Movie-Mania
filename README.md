@@ -36,7 +36,7 @@ Before running the application, ensure you have the following installed:
 Clone the repository to your local machine:
 
 ```bash
-git clone https://github.com/Maheen012/movie-mania.git
+git clone https://github.com/Maheen012/Movie-Mania.git
 cd movie-mania
 ```
 
