@@ -27,6 +27,7 @@ Before running the application, ensure you have the following installed:
 
 - **Java Development Kit (JDK)**: Version 11 or higher.
 - **Maven**: For building and managing dependencies.
+- **IntelliJ IDEA**: For running the application.
   
 ---
 
@@ -42,7 +43,7 @@ cd movie-mania
 
 ### 2. Import the Project into IntelliJ IDEA
 1. Open IntelliJ IDEA.
-2. Click on ***Open**.
+2. Click on **Open**.
 3. Navigate to the directory where you cloned the repository and select the root folder of the project (movie-mania).
 4. Click **OK** to import the project.
 
