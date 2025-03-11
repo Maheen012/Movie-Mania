@@ -1,5 +1,6 @@
 package org.example.view;
 
+import org.example.controller.UserManager;
 import org.example.model.Movie;
 import org.example.controller.MovieManager;
 
@@ -15,6 +16,7 @@ import java.util.List;
  */
 public class MovieViewer {
     private MovieManager movieManager;
+    private UserManager userManager;
 
     /**
      * Constructor for MovieViewer class.
@@ -23,6 +25,7 @@ public class MovieViewer {
      * @param movieManager The MovieManager to handle movie data and actions.
      */
     public MovieViewer(MovieManager movieManager) {
+        this.userManager = userManager;
         this.movieManager = movieManager;
     }
 
@@ -95,6 +98,7 @@ public class MovieViewer {
      * @param movie The movie whose details will be displayed.
      */
     public void showMovieDetailsScreen(Movie movie) {
+        userManager = new UserManager();
         // Create movie details frame
         JFrame movieDetailsFrame = new JFrame(movie.getTitle());
         movieDetailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -124,7 +128,25 @@ public class MovieViewer {
         JScrollPane scrollPane = new JScrollPane(txtMovieDetails);
         movieDetailsFrame.add(scrollPane, BorderLayout.CENTER);
 
-        // Add a back button to return to the movie titles screen
+        // Create a panel for the buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        // Add "Add to Favorites" button
+        JButton btnAddToFavorites = new JButton("Add to Favorites");
+        btnAddToFavorites.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String movieTitle = movie.getTitle(); // Get the movie title
+                userManager.addToFavorites(movieTitle); // Add the movie to the user's favorites
+                JOptionPane.showMessageDialog(movieDetailsFrame, "Movie added to favorites!");
+
+                movieDetailsFrame.dispose(); // Close the current movie details window
+            }
+        });
+        buttonPanel.add(btnAddToFavorites); // Add button to the panel
+
+        // Add "Back to Movie Titles" button
         JButton btnBack = new JButton("Back to Movie Titles");
         btnBack.addActionListener(new ActionListener() {
             @Override
@@ -133,7 +155,10 @@ public class MovieViewer {
                 showMovieTitlesScreen(); // Return to the movie titles screen
             }
         });
-        movieDetailsFrame.add(btnBack, BorderLayout.SOUTH); // Add button to the bottom
+        buttonPanel.add(btnBack); // Add button to the panel
+
+        // Add the button panel to the south of the frame
+        movieDetailsFrame.add(buttonPanel, BorderLayout.SOUTH);
 
         movieDetailsFrame.setVisible(true); // Make the frame visible
     }

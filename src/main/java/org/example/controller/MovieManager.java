@@ -122,6 +122,22 @@ public class MovieManager {
     public List<Movie> getMovies() {
         return movies;
     }
+
+
+    /**
+     * Retrieves a movie by its title.
+     *
+     * @param title the title of the movie
+     * @return the Movie object if found, or null if not found
+     */
+    public Movie getMovieByTitle(String title) {
+        for (Movie movie : movies) {
+            if (movie.getTitle().equalsIgnoreCase(title)) {
+                return movie; // Return the movie if the title matches
+            }
+        }
+        return null; // Return null if no movie with the given title is found
+    }
 }
 
 
