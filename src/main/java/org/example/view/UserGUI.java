@@ -1,11 +1,14 @@
 package org.example.view;
 
 import org.example.controller.MovieManager;
+import org.example.controller.UserManager;
+import org.example.model.Movie;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 /**
  * UserGUI represents the graphical user interface for the user in the Movie Mania system.
@@ -13,15 +16,18 @@ import java.awt.event.ActionListener;
  */
 public class UserGUI {
     private MovieManager movieManager;
+    private UserManager userManager;
 
     /**
      * Constructor for the UserGUI class.
-     * Initializes the GUI with a MovieManager object to handle movie data.
+     * Initializes the GUI with MovieManager and UserManager objects.
      *
      * @param movieManager The MovieManager that handles movie data and actions.
+     * @param userManager The UserManager that handles user data, favorites, and authentication.
      */
-    public UserGUI(MovieManager movieManager) {
+    public UserGUI(MovieManager movieManager, UserManager userManager) {
         this.movieManager = movieManager;
+        this.userManager = userManager;
         initializeUI();
     }
 
@@ -52,11 +58,7 @@ public class UserGUI {
 
         // Add action listeners to buttons
         btnViewMovies.addActionListener(e -> new MovieViewer(movieManager).showMovieTitlesScreen());
-
-        // Placeholder for the View Favorites button functionality
-        btnViewFavorites.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Favorites functionality not implemented yet.");
-        });
+        btnViewFavorites.addActionListener(e -> showFavoritesScreen(frame));
 
         // Placeholder for the Watch History button functionality
         btnWatchHistory.addActionListener(e -> {
@@ -83,4 +85,74 @@ public class UserGUI {
 
         frame.setVisible(true); // Make the frame visible
     }
+
+    /**
+     * Displays the user's favorite movies in a new frame.
+     *
+     * @param mainFrame The main catalog frame to be shown again after closing the favorites screen.
+     */
+    public void showFavoritesScreen(JFrame mainFrame) {
+        String currentUsername = LoginGUI.getCurrentUsername(); // Get the logged-in username
+        List<String> favoriteMovies = userManager.getFavoriteMovies(currentUsername); // Get favorite movies
+
+        if (favoriteMovies.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No favorites added yet.");
+            return;
+        }
+
+        JFrame favoritesFrame = new JFrame("Favorites");
+        favoritesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        favoritesFrame.setSize(600, 500);
+        favoritesFrame.setLayout(new BorderLayout());
+
+        JLabel lblFavorites = new JLabel("Your Favorite Movies", JLabel.CENTER);
+        lblFavorites.setFont(new Font("Arial", Font.BOLD, 18));
+        favoritesFrame.add(lblFavorites, BorderLayout.NORTH);
+
+        JPanel favoritesPanel = new JPanel(new GridLayout(0, 3, 10, 10));
+        favoritesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JScrollPane scrollPane = new JScrollPane(favoritesPanel);
+        favoritesFrame.add(scrollPane, BorderLayout.CENTER);
+
+        // Loop through each movie in the user's favorites and add them as buttons
+        for (String movieTitle : favoriteMovies) {
+            Movie movie = movieManager.getMovieByTitle(movieTitle);
+
+            if (movie != null) {
+                JButton btnFavorite = new JButton("<html><center>" + movie.getTitle() + "</center></html>");
+                btnFavorite.setPreferredSize(new Dimension(100, 180));
+                btnFavorite.setFont(new Font("Arial", Font.BOLD, 15));
+                btnFavorite.setVerticalTextPosition(SwingConstants.BOTTOM);
+                btnFavorite.setHorizontalTextPosition(SwingConstants.CENTER);
+                btnFavorite.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        new MovieViewer(movieManager).showMovieDetailsScreen(movie); // Show the movie details screen
+                        favoritesFrame.dispose(); // Close the favorites screen after selecting a movie
+                    }
+                });
+                favoritesPanel.add(btnFavorite); // Add the button for the favorite movie
+            }
+        }
+
+        // Create the "Go Back to Main Page" button
+        JButton btnGoBack = new JButton("Back to Catalogue");
+        btnGoBack.setFont(new Font("Arial", Font.BOLD, 15));
+        btnGoBack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                favoritesFrame.dispose(); // Close the favorites frame
+                mainFrame.setVisible(true); // Make the main frame visible again
+            }
+        });
+
+        // Add the "Go Back" button to the bottom of the window
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.add(btnGoBack);
+        favoritesFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+        favoritesFrame.setVisible(true); // Show the favorites frame
+    }
+
 }
