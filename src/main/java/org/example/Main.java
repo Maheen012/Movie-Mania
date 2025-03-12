@@ -16,17 +16,18 @@ public class Main {
         UserManager userManager = new UserManager();
 
         // Load movies from CSV
-        movieManager.readMovies(); // Assuming this method loads movies successfully
+        movieManager.readMovies();
 
         // Start with the login screen
         LoginGUI login = new LoginGUI();
-        boolean isAdmin = login.isAdmin(); // Get role from login
+        login.waitForLogin(); // Wait here until the user logs in
 
         // Launch the appropriate GUI based on user role
-        if (isAdmin) {
-            new AdminGUI(movieManager); // Pass MovieManager to AdminGUI
+        if (login.isAdmin()) {
+            new AdminGUI(movieManager);
         } else {
-            new UserGUI(movieManager, userManager); // Pass both MovieManager and UserManager to UserGUI
+            new UserGUI(movieManager, userManager);
         }
     }
 }
+
