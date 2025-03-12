@@ -6,6 +6,34 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
+ * A custom JButton with rounded edges for a modern look.
+ */
+class RoundedButton extends JButton {
+    public RoundedButton(String text) {
+        super(text);
+        setContentAreaFilled(false);
+        setFocusPainted(false);
+        setBorderPainted(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(getBackground());
+        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
+        g2.setColor(getForeground());
+        FontMetrics fm = g2.getFontMetrics();
+        int x = (getWidth() - fm.stringWidth(getText())) / 2;
+        int y = (getHeight() + fm.getAscent()) / 2 - 2;
+        g2.drawString(getText(), x, y);
+        g2.dispose();
+        super.paintComponent(g);
+    }
+
+}
+
+/**
  * LoginGUI is responsible for handling the user authentication process, including user login, admin login, and sign-up.
  */
 public class LoginGUI {
@@ -13,6 +41,46 @@ public class LoginGUI {
     private boolean isAuthenticated;
     private UserManager userManager;
     private static String currentUsername;
+
+
+    /**
+     * Sets the username of the currently logged-in user.
+     *
+     * @param username The username to be set as the current user.
+     */
+    public static void setCurrentUsername(String username) {
+        currentUsername = username;
+    }
+
+    /**
+     * Gets the username of the currently logged-in user.
+     *
+     * @return the current username.
+     */
+    public static String getCurrentUsername() {
+        return currentUsername;
+    }
+
+    /**
+     * Checks if the logged-in user is an admin.
+     *
+     * @return true if the user is an admin, false otherwise.
+     */
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void waitForLogin() {
+        while (!isAuthenticated) {
+            try {
+                Thread.sleep(100); // Pause execution until the user logs in
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
 
     /**
      * Constructor for the LoginGUI class, initializes authentication status and creates the login GUI.
@@ -29,34 +97,29 @@ public class LoginGUI {
         frame.setLayout(new GridLayout(3, 1, 10, 10));
 
         // Create buttons for user login, admin login, and sign-up
-        JButton btnLoginUser = new JButton("Login as User");
-        JButton btnLoginAdmin = new JButton("Login as Admin");
-        JButton btnSignUp = new JButton("Sign Up");
+        JButton btnLoginUser = new RoundedButton("Login as User");
+        JButton btnLoginAdmin = new RoundedButton("Login as Admin");
+        JButton btnSignUp = new RoundedButton("Sign Up");
+
+        // Set button colors for improved UI
+        btnLoginUser.setBackground(new Color(30, 144, 255));
+        btnLoginUser.setForeground(Color.WHITE);
+        btnLoginAdmin.setBackground(new Color(220, 20, 60));
+        btnLoginAdmin.setForeground(Color.WHITE);
+        btnSignUp.setBackground(new Color(34, 139, 34));
+        btnSignUp.setForeground(Color.WHITE);
 
         // Add buttons to the frame
         frame.add(btnLoginUser);
         frame.add(btnLoginAdmin);
         frame.add(btnSignUp);
 
-        // Add action listener for the "Login as User" button
+        // Add action listeners to handle button clicks
         btnLoginUser.addActionListener(e -> showLoginDialog(false));
-
-        // Add action listener for the "Login as Admin" button
         btnLoginAdmin.addActionListener(e -> showLoginDialog(true));
-
-        // Add action listener for the "Sign Up" button
         btnSignUp.addActionListener(e -> showSignUpDialog());
 
         frame.setVisible(true); // Make the frame visible
-
-        // Wait until the user is authenticated
-        while (!isAuthenticated) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 
     /**
@@ -74,8 +137,11 @@ public class LoginGUI {
         JTextField txtUsername = new JTextField();
         JLabel lblPassword = new JLabel("Password:");
         JPasswordField txtPassword = new JPasswordField();
-        JButton btnLogin = new JButton("Login");
+        JButton btnLogin = new RoundedButton("Login");
+        btnLogin.setBackground(new Color(30, 144, 255));
+        btnLogin.setForeground(Color.WHITE);
 
+        // Add components to the login dialog
         loginDialog.add(lblUsername);
         loginDialog.add(txtUsername);
         loginDialog.add(lblPassword);
@@ -83,6 +149,7 @@ public class LoginGUI {
         loginDialog.add(new JLabel());
         loginDialog.add(btnLogin);
 
+        // Handle login logic
         btnLogin.addActionListener(e -> {
             String username = txtUsername.getText();
             String password = new String(txtPassword.getPassword());
@@ -123,8 +190,11 @@ public class LoginGUI {
         JTextField txtUsername = new JTextField();
         JLabel lblPassword = new JLabel("Password:");
         JPasswordField txtPassword = new JPasswordField();
-        JButton btnSignUp = new JButton("Sign Up");
+        JButton btnSignUp = new RoundedButton("Sign Up");
+        btnSignUp.setBackground(new Color(34, 139, 34));
+        btnSignUp.setForeground(Color.WHITE);
 
+        // Add components to the sign-up dialog
         signUpDialog.add(lblUsername);
         signUpDialog.add(txtUsername);
         signUpDialog.add(lblPassword);
@@ -132,6 +202,7 @@ public class LoginGUI {
         signUpDialog.add(new JLabel());
         signUpDialog.add(btnSignUp);
 
+        // Handle sign-up logic
         btnSignUp.addActionListener(e -> {
             String username = txtUsername.getText();
             String password = new String(txtPassword.getPassword());
@@ -142,31 +213,11 @@ public class LoginGUI {
                 JOptionPane.showMessageDialog(signUpDialog, "Username and password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 userManager.saveUserCredentials(username, password);
-                JOptionPane.showMessageDialog(signUpDialog, "Sign up successful! You can now log in.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(signUpDialog, "Sign up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
                 signUpDialog.dispose();
             }
         });
 
         signUpDialog.setVisible(true);
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    /**
-     * Sets the username of the currently logged-in user.
-     * This should be called when a user successfully logs in.
-     */
-    public static void setCurrentUsername(String username) {
-        currentUsername = username;
-    }
-
-    /**
-     * Gets the username of the currently logged-in user.
-     * @return the username of the current user
-     */
-    public static String getCurrentUsername() {
-        return currentUsername;
     }
 }
