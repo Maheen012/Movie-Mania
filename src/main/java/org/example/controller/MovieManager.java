@@ -65,15 +65,16 @@ public class MovieManager {
 
             // Process each line from the CSV and create Movie objects
             for (String[] nextLine : myEntries) {
-                String title = nextLine[0];
-                int year = Integer.parseInt(nextLine[1]); // Parse year
-                String mainCast = nextLine[2];
-                double rating = Double.parseDouble(nextLine[3]); // Parse rating
-                String genre = nextLine[4];
-                String description = nextLine[5];
+                int movieId = Integer.parseInt(nextLine[0]); // Parse movie ID
+                String title = nextLine[1];
+                int year = Integer.parseInt(nextLine[2]); // Parse year
+                String mainCast = nextLine[3];
+                double rating = Double.parseDouble(nextLine[4]); // Parse rating
+                String genre = nextLine[5];
+                String description = nextLine[6];
 
                 // Create a Movie object and add it to the list
-                Movie movie = new Movie(title, year, mainCast, rating, genre, description);
+                Movie movie = new Movie(movieId, title, year, mainCast, rating, genre, description);
                 movies.add(movie);
             }
 
@@ -91,12 +92,13 @@ public class MovieManager {
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(movieFile))) {
             // Write the header row to the CSV file
-            String[] header = {"Title", "Year", "Main Cast", "Rating", "Genre", "Description"};
+            String[] header = {"Movie ID", "Title", "Year", "Main Cast", "Rating", "Genre", "Description"};
             writer.writeNext(header);
 
             // Write each movie's data to the CSV file
             for (Movie movie : movies) {
                 String[] movieData = {
+                        String.valueOf(movie.getMovieId()), // Convert movie ID to string
                         movie.getTitle(),
                         String.valueOf(movie.getYear()), // Convert year to string
                         movie.getMainCast(),
@@ -123,20 +125,19 @@ public class MovieManager {
         return movies;
     }
 
-
     /**
-     * Retrieves a movie by its title.
+     * Retrieves a movie by its ID.
      *
-     * @param title the title of the movie
-     * @return the Movie object if found, or null if not found
+     * @param movieId The ID of the movie.
+     * @return The Movie object if found, or null if not found.
      */
-    public Movie getMovieByTitle(String title) {
+    public Movie getMovieById(int movieId) {
         for (Movie movie : movies) {
-            if (movie.getTitle().equalsIgnoreCase(title)) {
-                return movie; // Return the movie if the title matches
+            if (movie.getMovieId() == movieId) {
+                return movie;
             }
         }
-        return null; // Return null if no movie with the given title is found
+        return null;
     }
 }
 
