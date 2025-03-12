@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -56,14 +57,10 @@ public class UserGUI {
         JButton btnWatchHistory = new JButton("Watch History");
         JButton btnLogout = new JButton("Logout");
 
-        // Add action listeners to buttons
+        // Add action listeners for buttons
         btnViewMovies.addActionListener(e -> new MovieViewer(movieManager).showMovieTitlesScreen());
         btnViewFavorites.addActionListener(e -> showFavoritesScreen(frame));
-
-        // Placeholder for the Watch History button functionality
-        btnWatchHistory.addActionListener(e -> {
-            JOptionPane.showMessageDialog(frame, "Watch history functionality not implemented yet.");
-        });
+        btnWatchHistory.addActionListener(e -> showWatchHistoryScreen(frame));
 
         // Logout functionality
         btnLogout.addActionListener(new ActionListener() {
@@ -88,71 +85,186 @@ public class UserGUI {
 
     /**
      * Displays the user's favorite movies in a new frame.
+     * The user can click on movie titles to view their details or select multiple movies to remove from the favorites.
      *
      * @param mainFrame The main catalog frame to be shown again after closing the favorites screen.
      */
     public void showFavoritesScreen(JFrame mainFrame) {
-        String currentUsername = LoginGUI.getCurrentUsername(); // Get the logged-in username
-        List<String> favoriteMovies = userManager.getFavoriteMovies(currentUsername); // Get favorite movies
+        // Get the current logged-in username
+        String currentUsername = LoginGUI.getCurrentUsername();
 
+        // Get the list of favorite movies for the current user
+        List<String> favoriteMovies = userManager.getFavoriteMovies(currentUsername);
+
+        // Check if there are no favorite movies
         if (favoriteMovies.isEmpty()) {
             JOptionPane.showMessageDialog(null, "No favorites added yet.");
             return;
         }
 
+        // Create the favorites frame
         JFrame favoritesFrame = new JFrame("Favorites");
-        favoritesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         favoritesFrame.setSize(600, 500);
         favoritesFrame.setLayout(new BorderLayout());
 
+        // Create and add the header label
         JLabel lblFavorites = new JLabel("Your Favorite Movies", JLabel.CENTER);
         lblFavorites.setFont(new Font("Arial", Font.BOLD, 18));
         favoritesFrame.add(lblFavorites, BorderLayout.NORTH);
 
-        JPanel favoritesPanel = new JPanel(new GridLayout(0, 3, 10, 10));
-        favoritesPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        // Create the panel to display the favorite movies with checkboxes
+        JPanel favoritesPanel = new JPanel();
+        favoritesPanel.setLayout(new BoxLayout(favoritesPanel, BoxLayout.Y_AXIS));  // Vertical layout
+        List<JCheckBox> checkboxes = new ArrayList<>();  // List to hold checkboxes for each movie
 
+        // Add a checkbox for each favorite movie
+        for (String movieTitle : favoriteMovies) {
+            JCheckBox movieCheckbox = new JCheckBox(movieTitle);
+            checkboxes.add(movieCheckbox);
+            favoritesPanel.add(movieCheckbox);
+        }
+
+        // Wrap the favorites panel with a scroll pane to handle overflow
         JScrollPane scrollPane = new JScrollPane(favoritesPanel);
         favoritesFrame.add(scrollPane, BorderLayout.CENTER);
 
-        // Loop through each movie in the user's favorites and add them as buttons
-        for (String movieTitle : favoriteMovies) {
-            Movie movie = movieManager.getMovieByTitle(movieTitle);
-
-            if (movie != null) {
-                JButton btnFavorite = new JButton("<html><center>" + movie.getTitle() + "</center></html>");
-                btnFavorite.setPreferredSize(new Dimension(100, 180));
-                btnFavorite.setFont(new Font("Arial", Font.BOLD, 15));
-                btnFavorite.setVerticalTextPosition(SwingConstants.BOTTOM);
-                btnFavorite.setHorizontalTextPosition(SwingConstants.CENTER);
-                btnFavorite.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        new MovieViewer(movieManager).showMovieDetailsScreen(movie); // Show the movie details screen
-                        favoritesFrame.dispose(); // Close the favorites screen after selecting a movie
-                    }
-                });
-                favoritesPanel.add(btnFavorite); // Add the button for the favorite movie
-            }
-        }
-
-        // Create the "Go Back to Main Page" button
-        JButton btnGoBack = new JButton("Back to Catalogue");
-        btnGoBack.setFont(new Font("Arial", Font.BOLD, 15));
-        btnGoBack.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                favoritesFrame.dispose(); // Close the favorites frame
-                mainFrame.setVisible(true); // Make the main frame visible again
-            }
-        });
-
-        // Add the "Go Back" button to the bottom of the window
+        // Create a panel for the "Remove from Favs" button
         JPanel bottomPanel = new JPanel();
+
+        // Add the "Remove from Favs" button to the bottom panel
+        JButton btnRemoveFromFavs = new JButton("Remove from Favorites");
+        btnRemoveFromFavs.addActionListener(e -> {
+            List<String> selectedMovies = new ArrayList<>();
+
+            // Add selected movie titles to the list
+            for (JCheckBox checkbox : checkboxes) {
+                if (checkbox.isSelected()) {
+                    selectedMovies.add(checkbox.getText());
+                }
+            }
+
+            // If no movies are selected, show a message
+            if (selectedMovies.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No movies selected.");
+                return;
+            }
+
+            // Remove selected movies from favorites and update the CSV
+            for (String movieTitle : selectedMovies) {
+                userManager.removeFromFavorites(movieTitle);
+            }
+
+            JOptionPane.showMessageDialog(null, "Selected movies removed from favorites.");
+            favoritesFrame.dispose();  // Close the current favorites frame
+            showFavoritesScreen(mainFrame);  // Refresh the favorites screen to reflect changes
+        });
+        bottomPanel.add(btnRemoveFromFavs);
+
+        // Add the "Back to Catalogue" button
+        JButton btnGoBack = new JButton("Back to Catalogue");
+        btnGoBack.addActionListener(e -> {
+            favoritesFrame.dispose();
+            mainFrame.setVisible(true);
+        });
         bottomPanel.add(btnGoBack);
+
+        // Add the bottom panel with the buttons to the frame
         favoritesFrame.add(bottomPanel, BorderLayout.SOUTH);
 
-        favoritesFrame.setVisible(true); // Show the favorites frame
+        // Display the favorites frame
+        favoritesFrame.setVisible(true);
+    }
+
+    /**
+     * Displays the user's watch history in a new frame.
+     * The user can click on movie titles to view their details or select multiple movies to remove from the watch history.
+     *
+     * @param mainFrame The main catalog frame to be shown again after closing the watch history screen.
+     */
+    public void showWatchHistoryScreen(JFrame mainFrame) {
+        // Get the current logged-in username
+        String currentUsername = LoginGUI.getCurrentUsername();
+
+        // Get the list of watch history movies for the current user
+        List<String> watchHistoryMovies = userManager.getWatchHistory(currentUsername);
+
+        // Check if there are no watch history movies
+        if (watchHistoryMovies.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No watch history added yet.");
+            return;
+        }
+
+        // Create the watch history frame
+        JFrame watchHistoryFrame = new JFrame("Watch History");
+        watchHistoryFrame.setSize(600, 500);
+        watchHistoryFrame.setLayout(new BorderLayout());
+
+        // Create and add the header label
+        JLabel lblWatchHistory = new JLabel("Your Watch History", JLabel.CENTER);
+        lblWatchHistory.setFont(new Font("Arial", Font.BOLD, 18));
+        watchHistoryFrame.add(lblWatchHistory, BorderLayout.NORTH);
+
+        // Create the panel to display the watch history movies with checkboxes
+        JPanel watchHistoryPanel = new JPanel();
+        watchHistoryPanel.setLayout(new BoxLayout(watchHistoryPanel, BoxLayout.Y_AXIS));  // Vertical layout
+        List<JCheckBox> checkboxes = new ArrayList<>();  // List to hold checkboxes for each movie
+
+        // Add a checkbox for each watch history movie
+        for (String movieTitle : watchHistoryMovies) {
+            JCheckBox movieCheckbox = new JCheckBox(movieTitle);
+            checkboxes.add(movieCheckbox);
+            watchHistoryPanel.add(movieCheckbox);
+        }
+
+        // Wrap the watch history panel with a scroll pane to handle overflow
+        JScrollPane scrollPane = new JScrollPane(watchHistoryPanel);
+        watchHistoryFrame.add(scrollPane, BorderLayout.CENTER);
+
+        // Create a panel for the "Remove from History" button
+        JPanel bottomPanel = new JPanel();
+
+        // Add the "Remove from History" button to the bottom panel
+        JButton btnRemoveFromHistory = new JButton("Remove from History");
+        btnRemoveFromHistory.addActionListener(e -> {
+            List<String> selectedMovies = new ArrayList<>();
+
+            // Add selected movie titles to the list
+            for (JCheckBox checkbox : checkboxes) {
+                if (checkbox.isSelected()) {
+                    selectedMovies.add(checkbox.getText());
+                }
+            }
+
+            // If no movies are selected, show a message
+            if (selectedMovies.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "No movies selected.");
+                return;
+            }
+
+            // Remove selected movies from watch history and update the CSV
+            for (String movieTitle : selectedMovies) {
+                userManager.removeFromWatchHistory(movieTitle);
+            }
+
+            JOptionPane.showMessageDialog(null, "Selected movies removed from watch history.");
+            watchHistoryFrame.dispose();  // Close the current watch history frame
+            showWatchHistoryScreen(mainFrame);  // Refresh the watch history screen to reflect changes
+        });
+        bottomPanel.add(btnRemoveFromHistory);
+
+        // Add the "Back to Catalogue" button
+        JButton btnGoBack = new JButton("Back to Catalogue");
+        btnGoBack.addActionListener(e -> {
+            watchHistoryFrame.dispose();
+            mainFrame.setVisible(true);
+        });
+        bottomPanel.add(btnGoBack);
+
+        // Add the bottom panel with the buttons to the frame
+        watchHistoryFrame.add(bottomPanel, BorderLayout.SOUTH);
+
+        // Display the watch history frame
+        watchHistoryFrame.setVisible(true);
     }
 
 }

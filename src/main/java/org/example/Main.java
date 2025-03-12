@@ -13,7 +13,7 @@ public class Main {
     public static void main(String[] args) {
         // Initialize MovieManager and UserManager
         MovieManager movieManager = new MovieManager();
-        UserManager userManager = new UserManager(); // Initialize UserManager
+        UserManager userManager = new UserManager();
 
         // Load movies from CSV
         movieManager.readMovies(); // Assuming this method loads movies successfully

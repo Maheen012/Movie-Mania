@@ -93,7 +93,8 @@ public class MovieViewer {
 
     /**
      * Displays a detailed screen for a selected movie.
-     * Shows movie details such as year, cast, rating, genre, and description.
+     * Shows movie details such as year, cast, rating, genre, and description with buttons for favorites
+     * and watch history
      *
      * @param movie The movie whose details will be displayed.
      */
@@ -134,32 +135,31 @@ public class MovieViewer {
 
         // Add "Add to Favorites" button
         JButton btnAddToFavorites = new JButton("Add to Favorites");
-        btnAddToFavorites.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String movieTitle = movie.getTitle(); // Get the movie title
-                userManager.addToFavorites(movieTitle); // Add the movie to the user's favorites
-                JOptionPane.showMessageDialog(movieDetailsFrame, "Movie added to favorites!");
-
-                movieDetailsFrame.dispose(); // Close the current movie details window
-            }
+        btnAddToFavorites.addActionListener(e -> {
+            String movieTitle = movie.getTitle();
+            userManager.addToFavorites(movieTitle);
         });
-        buttonPanel.add(btnAddToFavorites); // Add button to the panel
+        buttonPanel.add(btnAddToFavorites);
+
+        // Add "Add to Watch History" button
+        JButton btnAddToWatchHistory = new JButton("Add to Watch History");
+        btnAddToWatchHistory.addActionListener(e -> {
+            String movieTitle = movie.getTitle();
+            userManager.addToWatchHistory(movieTitle);
+        });
+        buttonPanel.add(btnAddToWatchHistory);
 
         // Add "Back to Movie Titles" button
         JButton btnBack = new JButton("Back to Movie Titles");
-        btnBack.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                movieDetailsFrame.dispose(); // Close the movie details window
-                showMovieTitlesScreen(); // Return to the movie titles screen
-            }
+        btnBack.addActionListener(e -> {
+            movieDetailsFrame.dispose();
+            showMovieTitlesScreen();
         });
-        buttonPanel.add(btnBack); // Add button to the panel
+        buttonPanel.add(btnBack);
 
         // Add the button panel to the south of the frame
         movieDetailsFrame.add(buttonPanel, BorderLayout.SOUTH);
 
-        movieDetailsFrame.setVisible(true); // Make the frame visible
+        movieDetailsFrame.setVisible(true);
     }
 }
