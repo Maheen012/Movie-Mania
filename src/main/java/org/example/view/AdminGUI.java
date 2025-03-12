@@ -87,9 +87,10 @@ public class AdminGUI {
         JFrame addMovieFrame = new JFrame("Add Movie");
         addMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         addMovieFrame.setSize(400, 400); // Set window size
-        addMovieFrame.setLayout(new GridLayout(7, 2, 10, 10));
+        addMovieFrame.setLayout(new GridLayout(8, 2, 10, 10)); // Added an extra row for movie ID
 
         // Create input fields for movie details
+        JTextField txtMovieId = new JTextField();
         JTextField txtTitle = new JTextField();
         JTextField txtYear = new JTextField();
         JTextField txtMainCast = new JTextField();
@@ -99,6 +100,8 @@ public class AdminGUI {
         JScrollPane scrollPane = new JScrollPane(txtDescription);
 
         // Add labels and input fields to the window
+        addMovieFrame.add(new JLabel("Movie ID:"));
+        addMovieFrame.add(txtMovieId);
         addMovieFrame.add(new JLabel("Title:"));
         addMovieFrame.add(txtTitle);
         addMovieFrame.add(new JLabel("Year:"));
@@ -129,7 +132,8 @@ public class AdminGUI {
                 }
 
                 try {
-                    // Parse year and rating values
+                    // Parse movie ID, year, and rating values
+                    int movieId = Integer.parseInt(txtMovieId.getText().trim());
                     int year = Integer.parseInt(txtYear.getText().trim());
                     double rating = Double.parseDouble(txtRating.getText().trim());
 
@@ -143,8 +147,14 @@ public class AdminGUI {
                         return;
                     }
 
+                    // Check if the movie ID already exists
+                    if (movieManager.getMovieById(movieId) != null) {
+                        JOptionPane.showMessageDialog(addMovieFrame, "Movie ID already exists. Please use a unique ID.");
+                        return;
+                    }
+
                     // Create a new Movie object and add it to the movie list
-                    Movie newMovie = new Movie(title, year, mainCast, rating, genre, description);
+                    Movie newMovie = new Movie(movieId, title, year, mainCast, rating, genre, description);
                     movieManager.getMovies().add(newMovie);
                     movieManager.saveMovies(); // Save the updated movie list to CSV
 
@@ -162,16 +172,16 @@ public class AdminGUI {
     }
 
     /**
-     * Deletes a movie by its title.
+     * Deletes a movie by its ID.
      *
-     * @param title The title of the movie to be deleted.
+     * @param movieId The ID of the movie to be deleted.
      * @return true if the movie was found and deleted, false otherwise.
      */
-    private boolean deleteMovieByTitle(String title) {
+    private boolean deleteMovieById(int movieId) {
         List<Movie> movies = movieManager.getMovies(); // Get list of movies
-        // Iterate through the list to find the movie by title
+        // Iterate through the list to find the movie by ID
         for (Movie movie : movies) {
-            if (movie.getTitle().equalsIgnoreCase(title)) {
+            if (movie.getMovieId() == movieId) {
                 // Remove the movie from the list
                 movies.remove(movie);
                 movieManager.saveMovies(); // Save the updated list to CSV
@@ -182,7 +192,7 @@ public class AdminGUI {
     }
 
     /**
-     * Displays the screen to delete a movie by its title.
+     * Displays the screen to delete a movie by its ID.
      */
     private void showDeleteMovieScreen() {
         // Create the delete movie frame
@@ -191,29 +201,28 @@ public class AdminGUI {
         deleteMovieFrame.setSize(400, 200);
         deleteMovieFrame.setLayout(new GridLayout(2, 2, 10, 10));
 
-        // Create input field for movie title
-        JTextField txtTitle = new JTextField();
-        deleteMovieFrame.add(new JLabel("Enter Title to Delete:"));
-        deleteMovieFrame.add(txtTitle);
+        // Create input field for movie ID
+        JTextField txtMovieId = new JTextField();
+        deleteMovieFrame.add(new JLabel("Enter Movie ID to Delete:"));
+        deleteMovieFrame.add(txtMovieId);
 
         // Add delete button and action listener
         JButton btnDelete = new JButton("Delete");
         btnDelete.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String titleToDelete = txtTitle.getText().trim();
-                if (titleToDelete.isEmpty()) {
-                    JOptionPane.showMessageDialog(deleteMovieFrame, "Please enter a title.");
-                    return;
+                try {
+                    int movieId = Integer.parseInt(txtMovieId.getText().trim());
+                    boolean deleted = deleteMovieById(movieId);
+                    if (deleted) {
+                        JOptionPane.showMessageDialog(deleteMovieFrame, "Movie deleted successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(deleteMovieFrame, "Movie not found.");
+                    }
+                    deleteMovieFrame.dispose(); // Close the delete movie window
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(deleteMovieFrame, "Invalid movie ID. Please enter a valid number.");
                 }
-
-                boolean deleted = deleteMovieByTitle(titleToDelete);
-                if (deleted) {
-                    JOptionPane.showMessageDialog(deleteMovieFrame, "Movie deleted successfully!");
-                } else {
-                    JOptionPane.showMessageDialog(deleteMovieFrame, "Movie not found.");
-                }
-                deleteMovieFrame.dispose(); // Close the delete movie window
             }
         });
 
@@ -222,54 +231,43 @@ public class AdminGUI {
     }
 
     /**
-     * Displays the screen to update a movie.
+     * Displays the screen to update a movie by its ID.
      */
     private void showUpdateMovieScreen() {
         // Create the update movie frame
         JFrame updateMovieFrame = new JFrame("Update Movie");
         updateMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        updateMovieFrame.setSize(400, 400);
-        updateMovieFrame.setLayout(new GridLayout(3, 2, 10, 10));
+        updateMovieFrame.setSize(400, 200);
+        updateMovieFrame.setLayout(new GridLayout(2, 2, 10, 10));
 
-        // Create search field to find movie by title
-        JTextField txtSearchTitle = new JTextField();
+        // Create search field to find movie by ID
+        JTextField txtMovieId = new JTextField();
         JButton btnSearch = new JButton("Search");
 
         // Add search label and input field
-        updateMovieFrame.add(new JLabel("Enter Title to Update:"));
-        updateMovieFrame.add(txtSearchTitle);
+        updateMovieFrame.add(new JLabel("Enter Movie ID to Update:"));
+        updateMovieFrame.add(txtMovieId);
         updateMovieFrame.add(btnSearch);
 
         btnSearch.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String searchTitle = txtSearchTitle.getText().trim();
+                try {
+                    int movieId = Integer.parseInt(txtMovieId.getText().trim());
+                    Movie movieToUpdate = movieManager.getMovieById(movieId);
 
-                // Validate if search field is empty
-                if (searchTitle.isEmpty()) {
-                    JOptionPane.showMessageDialog(updateMovieFrame, "Please enter a title.");
-                    return;
-                }
-
-                Movie movieToUpdate = null;
-
-                // Search for the movie in the list
-                for (Movie movie : movieManager.getMovies()) {
-                    if (movie.getTitle().equalsIgnoreCase(searchTitle)) {
-                        movieToUpdate = movie;
-                        break;
+                    // If movie is found, proceed to editing screen
+                    if (movieToUpdate == null) {
+                        JOptionPane.showMessageDialog(updateMovieFrame, "Movie not found!");
+                        return;
                     }
-                }
 
-                // If movie is found, proceed to editing screen
-                if (movieToUpdate == null) {
-                    JOptionPane.showMessageDialog(updateMovieFrame, "Movie not found!");
-                    return;
+                    // Close search window and open the edit window
+                    updateMovieFrame.dispose();
+                    showEditMovieScreen(movieToUpdate);
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(updateMovieFrame, "Invalid movie ID. Please enter a valid number.");
                 }
-
-                // Close search window and open the edit window
-                updateMovieFrame.dispose();
-                showEditMovieScreen(movieToUpdate);
             }
         });
 
