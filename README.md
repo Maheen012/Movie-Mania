@@ -15,8 +15,8 @@ Movie Mania is a Java-based application for managing movies. It provides separat
 
 ### User Features
 - **View Movies**: View a list of all movies.
-- **View Favorites**: Placeholder for viewing favorite movies (not implemented).
-- **Watch History**: Placeholder for viewing watch history (not implemented).
+- **View Favorites**: View a list of favorite movies.
+- **Watch History**: View watch history.
 - **Logout**: Log out
 
 ---
@@ -61,8 +61,7 @@ After running the `Main.java` file, you'll be prompted with the login screen. He
 #### If you're logging in as a **User**:
 1. You will need to **sign up** first before you can log in. Provide a **username** and **password** during sign-up.
 2. Once signed up, log in with your username and password to access the user features.
-3. You can **view all movies**.
-4. Features like **viewing favorites** and **watch history** are placeholders and aren't implemented yet, but will be displayed as such.
+3. You can **view all movies**, **view favorites** and **view watch history**.
 
 #### If you're logging in as an **Admin**:
 1. Use the following credentials to log in:
