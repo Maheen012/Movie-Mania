@@ -1,6 +1,6 @@
 # Movie Mania
 
-Movie Mania is a Java-based application for managing movies. It provides separate interfaces for **Admin** and **User** roles. Admins can add, delete, update, and view movies, while users can view movies and access additional features like favorites and watch history (placeholders).
+Movie Mania is a Java-based application for managing movies. It provides separate interfaces for **Admin** and **User** roles. Admins can add, delete, update, and view movies, while users can view movies and access additional features like favorites and watch history.
 
 ---
 
