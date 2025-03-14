@@ -35,16 +35,13 @@ public class MovieViewer {
     public ImageIcon resizeImage(String imagePath, int targetWidth, int targetHeight) {
         try {
             // Debug: Print the image path
-            System.out.println("Loading image from: " + imagePath);
+            //System.out.println("Loading image from: " + imagePath);
 
             // Load the original image
             BufferedImage originalImage = ImageIO.read(getClass().getClassLoader().getResource(imagePath));
 
-            // If the image is missing, load a default image
-            if (originalImage == null) {
-                System.err.println("Failed to load image: " + imagePath + ". Loading default image.");
-                originalImage = ImageIO.read(getClass().getClassLoader().getResource("images/default.jpg"));
-            }
+
+
 
             // Calculate the aspect ratio
             double aspectRatio = (double) originalImage.getWidth() / originalImage.getHeight();
