@@ -97,10 +97,10 @@ public class UserGUI {
         List<String> favoriteMovies = userManager.getFavoriteMovies(currentUsername);
 
         // Check if there are no favorite movies
-        if (favoriteMovies.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "No favorites added yet.");
-            return;
-        }
+//        if (favoriteMovies.isEmpty()) {
+//            JOptionPane.showMessageDialog(null, "No favorites added yet.");
+//            return;
+//        }
 
         // Create the favorites frame
         JFrame favoritesFrame = new JFrame("Favorites");
@@ -189,10 +189,10 @@ public class UserGUI {
         List<String> watchHistoryMovies = userManager.getWatchHistory(currentUsername);
 
         // Check if there are no watch history movies
-        if (watchHistoryMovies.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "No watch history added yet.");
-            return;
-        }
+//        if (watchHistoryMovies.isEmpty()) {
+//            JOptionPane.showMessageDialog(null, "No watch history added yet.");
+//            return;
+//        }
 
         // Create the watch history frame
         JFrame watchHistoryFrame = new JFrame("Watch History");
