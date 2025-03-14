@@ -72,9 +72,10 @@ public class MovieManager {
                 double rating = Double.parseDouble(nextLine[4]); // Parse rating
                 String genre = nextLine[5];
                 String description = nextLine[6];
+                String coverImagePath = nextLine[7];
 
                 // Create a Movie object and add it to the list
-                Movie movie = new Movie(movieId, title, year, mainCast, rating, genre, description);
+                Movie movie = new Movie(movieId, title, year, mainCast, rating, genre, description,coverImagePath);
                 movies.add(movie);
             }
 

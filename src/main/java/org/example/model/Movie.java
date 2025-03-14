@@ -11,6 +11,8 @@ public class Movie {
     private double rating;
     private String genre;
     private String description;
+    private String coverImagePath; // New field for the cover image path
+
 
     /**
      * Constructor to initialize a Movie object with all the movie details.
@@ -23,7 +25,7 @@ public class Movie {
      * @param genre       The genre of the movie.
      * @param description A brief description of the movie.
      */
-    public Movie(int movieId, String title, int year, String mainCast, double rating, String genre, String description) {
+    public Movie(int movieId, String title, int year, String mainCast, double rating, String genre, String description, String coverImagePath) {
         this.movieId = movieId;
         this.title = title;
         this.year = year;
@@ -31,6 +33,7 @@ public class Movie {
         this.rating = rating;
         this.genre = genre;
         this.description = description;
+        this.coverImagePath = coverImagePath;
     }
 
     // Getters and Setters
@@ -88,5 +91,13 @@ public class Movie {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getCoverImagePath() {
+        return coverImagePath;
+    }
+
+    public void setCoverImagePath(String coverImagePath) {
+        this.coverImagePath = coverImagePath;
     }
 }

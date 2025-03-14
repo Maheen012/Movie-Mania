@@ -9,6 +9,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 /**
  * MovieViewer provides the graphical user interface for displaying movie titles
@@ -29,6 +32,44 @@ public class MovieViewer {
         this.movieManager = movieManager;
     }
 
+    public ImageIcon resizeImage(String imagePath, int targetWidth, int targetHeight) {
+        try {
+            // Debug: Print the image path
+            System.out.println("Loading image from: " + imagePath);
+
+            // Load the original image
+            BufferedImage originalImage = ImageIO.read(getClass().getClassLoader().getResource(imagePath));
+
+            // If the image is missing, load a default image
+            if (originalImage == null) {
+                System.err.println("Failed to load image: " + imagePath + ". Loading default image.");
+                originalImage = ImageIO.read(getClass().getClassLoader().getResource("images/default.jpg"));
+            }
+
+            // Calculate the aspect ratio
+            double aspectRatio = (double) originalImage.getWidth() / originalImage.getHeight();
+
+            // Calculate the new dimensions while preserving the aspect ratio
+            int newWidth = targetWidth;
+            int newHeight = (int) (targetWidth / aspectRatio);
+
+            // If the calculated height exceeds the target height, adjust the dimensions
+            if (newHeight > targetHeight) {
+                newHeight = targetHeight;
+                newWidth = (int) (targetHeight * aspectRatio);
+            }
+
+            // Resize the image
+            Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
+
+            // Convert the resized image to an ImageIcon
+            return new ImageIcon(resizedImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null; // Return null if the image cannot be loaded
+        }
+    }
+
     /**
      * Displays the screen with a list of movie titles.
      * Each movie title is represented by a button that, when clicked,
@@ -38,7 +79,7 @@ public class MovieViewer {
         // Create the movie titles frame
         JFrame movieTitlesFrame = new JFrame("Movie Titles");
         movieTitlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieTitlesFrame.setSize(600, 400);
+        movieTitlesFrame.setSize(800, 600); // Increased size to accommodate images
         movieTitlesFrame.setLayout(new BorderLayout());
 
         // Create and add the title label to the top of the window
@@ -60,21 +101,30 @@ public class MovieViewer {
             // Show a message if no movies are found
             JOptionPane.showMessageDialog(movieTitlesFrame, "No movies found!");
         } else {
-            // Create a button for each movie and add it to the panel
+            // Create a panel for each movie and add it to the list panel
             for (Movie movie : movies) {
-                JButton btnMovie = new JButton("<html><center>" + movie.getTitle() + "</center></html>");
-                btnMovie.setPreferredSize(new Dimension(100, 180));
-                btnMovie.setFont(new Font("Arial", Font.BOLD, 15));
-                btnMovie.setVerticalTextPosition(SwingConstants.BOTTOM);
-                btnMovie.setHorizontalTextPosition(SwingConstants.CENTER);
-                btnMovie.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        showMovieDetailsScreen(movie); // Show details of the selected movie
-                        movieTitlesFrame.dispose(); // Close the movie titles window
+                JPanel moviePanel = new JPanel(new BorderLayout());
+                moviePanel.setPreferredSize(new Dimension(200, 300));
+
+                // Resize the movie cover image
+                ImageIcon coverIcon = resizeImage(movie.getCoverImagePath(), 150, 200); // Resize to 150x200 pixels
+                JLabel coverLabel = new JLabel(coverIcon);
+                moviePanel.add(coverLabel, BorderLayout.CENTER);
+
+                // Add the movie title below the cover
+                JLabel titleLabel = new JLabel(movie.getTitle(), JLabel.CENTER);
+                titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+                moviePanel.add(titleLabel, BorderLayout.SOUTH);
+
+                // Add action listener to show movie details when clicked
+                moviePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+                    public void mouseClicked(java.awt.event.MouseEvent evt) {
+                        showMovieDetailsScreen(movie);
+                        movieTitlesFrame.dispose();
                     }
                 });
-                movieListPanel.add(btnMovie); // Add button to the movie list panel
+
+                movieListPanel.add(moviePanel);
             }
         }
 
