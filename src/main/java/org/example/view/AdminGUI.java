@@ -154,7 +154,7 @@ public class AdminGUI {
                     }
 
                     // Create a new Movie object and add it to the movie list
-                    Movie newMovie = new Movie(movieId, title, year, mainCast, rating, genre, description);
+                    Movie newMovie = new Movie(movieId, title, year, mainCast, rating, genre, description, "resources/images");
                     movieManager.getMovies().add(newMovie);
                     movieManager.saveMovies(); // Save the updated movie list to CSV
 
