@@ -24,7 +24,7 @@ public class Main {
 
         // Launch the appropriate GUI based on user role
         if (login.isAdmin()) {
-            new AdminGUI(movieManager);
+            new AdminGUI(movieManager, userManager);
         } else {
             new UserGUI(movieManager, userManager);
         }
