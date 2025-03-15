@@ -66,16 +66,11 @@ public class MovieViewer {
         }
     }
 
-    /**
-     * Displays the screen with a list of movie titles.
-     * Each movie title is represented by a button that, when clicked,
-     * shows detailed information about the movie.
-     */
     public void showMovieTitlesScreen() {
         // Create the movie titles frame
         JFrame movieTitlesFrame = new JFrame("Movie Titles");
         movieTitlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieTitlesFrame.setSize(800, 600); // Increased size to accommodate images
+        movieTitlesFrame.setSize(1200, 800);
         movieTitlesFrame.setLayout(new BorderLayout());
 
         // Create a panel for filter controls
@@ -108,9 +103,9 @@ public class MovieViewer {
         JTextField titleSearchField = new JTextField(15);
         filterPanel.add(titleSearchField);
 
-        // Filter button
-        JButton filterButton = new JButton("Filter");
-        filterPanel.add(filterButton);
+        // Add a "Search" button for searching and filtering
+        JButton searchButton = new JButton("Search");
+        filterPanel.add(searchButton);
 
         // Add the filter panel to the top of the window
         movieTitlesFrame.add(filterPanel, BorderLayout.NORTH);
@@ -126,14 +121,14 @@ public class MovieViewer {
         // Get the list of movies from the MovieManager
         List<Movie> movies = movieManager.getMovies();
 
-        // Function to update the movie list based on filters
+        // Function to update the movie list based on filters and search
         Runnable updateMovieList = () -> {
             movieListPanel.removeAll();
 
             String selectedGenre = (String) genreComboBox.getSelectedItem();
             String yearText = yearField.getText();
             String ratingText = ratingField.getText();
-            String titleSearchText = titleSearchField.getText().toLowerCase();
+            String titleSearchText = titleSearchField.getText().toLowerCase(); // Case-insensitive search
 
             List<Movie> filteredMovies = movies.stream()
                     .filter(movie -> selectedGenre.equals("All") || movie.getGenre().toLowerCase().contains(selectedGenre.toLowerCase()))
@@ -177,10 +172,13 @@ public class MovieViewer {
             movieListPanel.repaint();
         };
 
-        // Add action listener to the filter button
-        filterButton.addActionListener(e -> updateMovieList.run());
+        // Add action listener to the search button (handles both search and filter)
+        searchButton.addActionListener(e -> updateMovieList.run());
 
-        // Initial movie list update
+        // Add action listener to the search field to trigger filtering on "Enter" key press
+        titleSearchField.addActionListener(e -> updateMovieList.run());
+
+        // Initial movie list update (show all movies by default)
         updateMovieList.run();
 
         // Add a back button to return to the catalogue
@@ -196,6 +194,7 @@ public class MovieViewer {
         movieTitlesFrame.setVisible(true); // Make the frame visible
     }
 
+
     /**
      * Displays a detailed screen for a selected movie.
      * Shows movie details such as year, cast, rating, genre, and description with buttons for favorites
@@ -208,7 +207,7 @@ public class MovieViewer {
         // Create movie details frame
         JFrame movieDetailsFrame = new JFrame(movie.getTitle());
         movieDetailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieDetailsFrame.setSize(500, 400);
+        movieDetailsFrame.setSize(1200, 800);
         movieDetailsFrame.setLayout(new BorderLayout());
 
         // Create and add the title label to the top of the window

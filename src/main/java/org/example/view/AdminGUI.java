@@ -36,7 +36,7 @@ public class AdminGUI {
     private void initializeUI() {
         // Create frame for admin catalogue window
         JFrame frame = new JFrame("Movie Mania - Admin Catalogue");
-        frame.setSize(400, 350);
+        frame.setSize(1200, 800);
         frame.setLayout(new BorderLayout());
 
         // Create and add the title label to the top of the window
@@ -89,7 +89,7 @@ public class AdminGUI {
         // Create the add movie frame
         JFrame addMovieFrame = new JFrame("Add Movie");
         addMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        addMovieFrame.setSize(400, 400); // Set window size
+        addMovieFrame.setSize(1200, 800); // Set window size
         addMovieFrame.setLayout(new GridLayout(8, 2, 10, 10)); // Added an extra row for movie ID
 
         // Create input fields for movie details
@@ -201,7 +201,7 @@ public class AdminGUI {
         // Create the delete movie frame
         JFrame deleteMovieFrame = new JFrame("Delete Movie");
         deleteMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        deleteMovieFrame.setSize(400, 200);
+        deleteMovieFrame.setSize(1200, 800);
         deleteMovieFrame.setLayout(new GridLayout(2, 2, 10, 10));
 
         // Create input field for movie ID
@@ -240,7 +240,7 @@ public class AdminGUI {
         // Create the update movie frame
         JFrame updateMovieFrame = new JFrame("Update Movie");
         updateMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        updateMovieFrame.setSize(400, 200);
+        updateMovieFrame.setSize(1200, 800);
         updateMovieFrame.setLayout(new GridLayout(2, 2, 10, 10));
 
         // Create search field to find movie by ID
@@ -286,7 +286,7 @@ public class AdminGUI {
         // Create the edit movie frame
         JFrame editMovieFrame = new JFrame("Edit Movie - " + movieToUpdate.getTitle());
         editMovieFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        editMovieFrame.setSize(400, 500);
+        editMovieFrame.setSize(1200, 800);
         editMovieFrame.setLayout(new GridLayout(8, 2, 10, 10));
 
         // Pre-fill input fields with existing movie data
