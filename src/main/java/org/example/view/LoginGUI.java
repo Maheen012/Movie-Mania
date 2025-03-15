@@ -92,7 +92,7 @@ public class LoginGUI {
 
         // Create the main login/sign-up frame
         JFrame frame = new JFrame("Movie Mania");
-        frame.setSize(350, 250);
+        frame.setSize(1200, 800);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new GridLayout(3, 1, 10, 10));
 
@@ -130,7 +130,7 @@ public class LoginGUI {
     private void showLoginDialog(boolean isAdminLogin) {
         JDialog loginDialog = new JDialog();
         loginDialog.setTitle(isAdminLogin ? "Login as Admin" : "Login as User");
-        loginDialog.setSize(300, 200);
+        loginDialog.setSize(1200, 800);
         loginDialog.setLayout(new GridLayout(3, 2, 10, 10));
 
         JLabel lblUsername = new JLabel("Username:");
@@ -183,7 +183,7 @@ public class LoginGUI {
     private void showSignUpDialog() {
         JDialog signUpDialog = new JDialog();
         signUpDialog.setTitle("Sign Up");
-        signUpDialog.setSize(300, 200);
+        signUpDialog.setSize(1200, 800);
         signUpDialog.setLayout(new GridLayout(3, 2, 10, 10));
 
         JLabel lblUsername = new JLabel("Username:");

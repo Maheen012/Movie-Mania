@@ -39,7 +39,7 @@ public class UserGUI {
     private void initializeUI() {
         // Create frame for user catalogue window
         JFrame frame = new JFrame("Movie Mania - User Catalogue");
-        frame.setSize(400, 350);
+        frame.setSize(1200, 800);
         frame.setLayout(new BorderLayout());
 
         // Create and add the title label to the top of the window
@@ -104,7 +104,7 @@ public class UserGUI {
 
         // Create the favorites frame
         JFrame favoritesFrame = new JFrame("Favorites");
-        favoritesFrame.setSize(600, 500);
+        favoritesFrame.setSize(1200, 800);
         favoritesFrame.setLayout(new BorderLayout());
 
         // Create and add the header label
@@ -114,7 +114,7 @@ public class UserGUI {
 
         // Create the panel to display the favorite movies with checkboxes
         JPanel favoritesPanel = new JPanel();
-        favoritesPanel.setLayout(new BoxLayout(favoritesPanel, BoxLayout.Y_AXIS));  // Vertical layout
+        favoritesPanel.setLayout(new BoxLayout(favoritesPanel, BoxLayout.Y_AXIS));
         List<JCheckBox> checkboxes = new ArrayList<>();  // List to hold checkboxes for each movie
 
         // Add a checkbox for each favorite movie
@@ -188,15 +188,9 @@ public class UserGUI {
         // Get the list of watch history movies for the current user
         List<String> watchHistoryMovies = userManager.getWatchHistory(currentUsername);
 
-        // Check if there are no watch history movies
-//        if (watchHistoryMovies.isEmpty()) {
-//            JOptionPane.showMessageDialog(null, "No watch history added yet.");
-//            return;
-//        }
-
         // Create the watch history frame
         JFrame watchHistoryFrame = new JFrame("Watch History");
-        watchHistoryFrame.setSize(600, 500);
+        watchHistoryFrame.setSize(1200, 800);
         watchHistoryFrame.setLayout(new BorderLayout());
 
         // Create and add the header label
