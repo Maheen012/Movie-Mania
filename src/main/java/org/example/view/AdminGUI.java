@@ -2,6 +2,7 @@ package org.example.view;
 
 import org.example.model.Movie;
 import org.example.controller.MovieManager;
+import org.example.controller.UserManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,14 +16,16 @@ import java.util.List;
  */
 public class AdminGUI {
     private MovieManager movieManager;
+    private UserManager userManager;
 
     /**
      * Constructor for initializing the AdminGUI.
      *
      * @param movieManager The MovieManager instance to manage movie operations.
      */
-    public AdminGUI(MovieManager movieManager) {
+    public AdminGUI(MovieManager movieManager, UserManager userManager) {
         this.movieManager = movieManager;
+        this.userManager = userManager;
         initializeUI();
     }
 
@@ -56,7 +59,7 @@ public class AdminGUI {
         btnAddMovie.addActionListener(e -> showAddMovieScreen());
         btnDeleteMovie.addActionListener(e -> showDeleteMovieScreen());
         btnUpdateMovie.addActionListener(e -> showUpdateMovieScreen());
-        btnViewMovies.addActionListener(e -> new MovieViewer(movieManager).showMovieTitlesScreen());
+        btnViewMovies.addActionListener(e -> new MovieViewer(movieManager, userManager).showMovieTitlesScreen());
         btnLogout.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

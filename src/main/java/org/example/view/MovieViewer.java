@@ -12,6 +12,7 @@ import java.util.List;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 /**
  * MovieViewer provides the graphical user interface for displaying movie titles
@@ -26,10 +27,11 @@ public class MovieViewer {
      * Initializes the viewer with a MovieManager to manage movie data.
      *
      * @param movieManager The MovieManager to handle movie data and actions.
+     * @param userManager The UserManager to handle user-related actions.
      */
-    public MovieViewer(MovieManager movieManager) {
-        this.userManager = userManager;
+    public MovieViewer(MovieManager movieManager, UserManager userManager) {
         this.movieManager = movieManager;
+        this.userManager = userManager;
     }
 
     public ImageIcon resizeImage(String imagePath, int targetWidth, int targetHeight) {
@@ -39,9 +41,6 @@ public class MovieViewer {
 
             // Load the original image
             BufferedImage originalImage = ImageIO.read(getClass().getClassLoader().getResource(imagePath));
-
-
-
 
             // Calculate the aspect ratio
             double aspectRatio = (double) originalImage.getWidth() / originalImage.getHeight();
@@ -79,10 +78,42 @@ public class MovieViewer {
         movieTitlesFrame.setSize(800, 600); // Increased size to accommodate images
         movieTitlesFrame.setLayout(new BorderLayout());
 
-        // Create and add the title label to the top of the window
-        JLabel lblMovieTitles = new JLabel("Movies", JLabel.CENTER);
-        lblMovieTitles.setFont(new Font("Arial", Font.BOLD, 18));
-        movieTitlesFrame.add(lblMovieTitles, BorderLayout.NORTH);
+        // Create a panel for filter controls
+        JPanel filterPanel = new JPanel(new FlowLayout());
+
+        // Add a label for the genre filter
+        JLabel genreLabel = new JLabel("Genre:");
+        filterPanel.add(genreLabel);
+
+        // Genre filter with more genres
+        String[] genres = {"All", "Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Thriller", "Romance", "Adventure", "Animation", "Crime", "Biography", "History", "Fantasy"};
+        JComboBox<String> genreComboBox = new JComboBox<>(genres);
+        filterPanel.add(genreComboBox);
+
+        // Year filter
+        JLabel yearLabel = new JLabel("Year:");
+        filterPanel.add(yearLabel);
+        JTextField yearField = new JTextField(5);
+        filterPanel.add(yearField);
+
+        // Rating filter
+        JLabel ratingLabel = new JLabel("Rating:");
+        filterPanel.add(ratingLabel);
+        JTextField ratingField = new JTextField(5);
+        filterPanel.add(ratingField);
+
+        // Search by title
+        JLabel titleSearchLabel = new JLabel("Search by Title:");
+        filterPanel.add(titleSearchLabel);
+        JTextField titleSearchField = new JTextField(15);
+        filterPanel.add(titleSearchField);
+
+        // Filter button
+        JButton filterButton = new JButton("Filter");
+        filterPanel.add(filterButton);
+
+        // Add the filter panel to the top of the window
+        movieTitlesFrame.add(filterPanel, BorderLayout.NORTH);
 
         // Create a panel to display the list of movies
         JPanel movieListPanel = new JPanel(new GridLayout(0, 3, 10, 10));
@@ -94,36 +125,63 @@ public class MovieViewer {
 
         // Get the list of movies from the MovieManager
         List<Movie> movies = movieManager.getMovies();
-        if (movies.isEmpty()) {
-            // Show a message if no movies are found
-            JOptionPane.showMessageDialog(movieTitlesFrame, "No movies found!");
-        } else {
-            // Create a panel for each movie and add it to the list panel
-            for (Movie movie : movies) {
-                JPanel moviePanel = new JPanel(new BorderLayout());
-                moviePanel.setPreferredSize(new Dimension(200, 300));
 
-                // Resize the movie cover image
-                ImageIcon coverIcon = resizeImage(movie.getCoverImagePath(), 150, 200); // Resize to 150x200 pixels
-                JLabel coverLabel = new JLabel(coverIcon);
-                moviePanel.add(coverLabel, BorderLayout.CENTER);
+        // Function to update the movie list based on filters
+        Runnable updateMovieList = () -> {
+            movieListPanel.removeAll();
 
-                // Add the movie title below the cover
-                JLabel titleLabel = new JLabel(movie.getTitle(), JLabel.CENTER);
-                titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-                moviePanel.add(titleLabel, BorderLayout.SOUTH);
+            String selectedGenre = (String) genreComboBox.getSelectedItem();
+            String yearText = yearField.getText();
+            String ratingText = ratingField.getText();
+            String titleSearchText = titleSearchField.getText().toLowerCase();
 
-                // Add action listener to show movie details when clicked
-                moviePanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                    public void mouseClicked(java.awt.event.MouseEvent evt) {
-                        showMovieDetailsScreen(movie);
-                        movieTitlesFrame.dispose();
-                    }
-                });
+            List<Movie> filteredMovies = movies.stream()
+                    .filter(movie -> selectedGenre.equals("All") || movie.getGenre().toLowerCase().contains(selectedGenre.toLowerCase()))
+                    .filter(movie -> yearText.isEmpty() || String.valueOf(movie.getYear()).equals(yearText))
+                    .filter(movie -> ratingText.isEmpty() || String.valueOf(movie.getRating()).equals(ratingText))
+                    .filter(movie -> titleSearchText.isEmpty() || movie.getTitle().toLowerCase().contains(titleSearchText))
+                    .collect(Collectors.toList());
 
-                movieListPanel.add(moviePanel);
+            if (filteredMovies.isEmpty()) {
+                // Show a message if no movies are found
+                JOptionPane.showMessageDialog(movieTitlesFrame, "No movies found!");
+            } else {
+                // Create a panel for each movie and add it to the list panel
+                for (Movie movie : filteredMovies) {
+                    JPanel moviePanel = new JPanel(new BorderLayout());
+                    moviePanel.setPreferredSize(new Dimension(200, 300));
+
+                    // Resize the movie cover image
+                    ImageIcon coverIcon = resizeImage(movie.getCoverImagePath(), 150, 200); // Resize to 150x200 pixels
+                    JLabel coverLabel = new JLabel(coverIcon);
+                    moviePanel.add(coverLabel, BorderLayout.CENTER);
+
+                    // Add the movie title below the cover
+                    JLabel titleLabel = new JLabel(movie.getTitle(), JLabel.CENTER);
+                    titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
+                    moviePanel.add(titleLabel, BorderLayout.SOUTH);
+
+                    // Add action listener to show movie details when clicked
+                    moviePanel.addMouseListener(new java.awt.event.MouseAdapter() {
+                        public void mouseClicked(java.awt.event.MouseEvent evt) {
+                            showMovieDetailsScreen(movie);
+                            movieTitlesFrame.dispose();
+                        }
+                    });
+
+                    movieListPanel.add(moviePanel);
+                }
             }
-        }
+
+            movieListPanel.revalidate();
+            movieListPanel.repaint();
+        };
+
+        // Add action listener to the filter button
+        filterButton.addActionListener(e -> updateMovieList.run());
+
+        // Initial movie list update
+        updateMovieList.run();
 
         // Add a back button to return to the catalogue
         JButton btnBack = new JButton("Back to Catalogue");

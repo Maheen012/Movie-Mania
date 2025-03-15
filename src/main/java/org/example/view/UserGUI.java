@@ -58,7 +58,7 @@ public class UserGUI {
         JButton btnLogout = new JButton("Logout");
 
         // Add action listeners for buttons
-        btnViewMovies.addActionListener(e -> new MovieViewer(movieManager).showMovieTitlesScreen());
+        btnViewMovies.addActionListener(e -> new MovieViewer(movieManager, userManager).showMovieTitlesScreen());
         btnViewFavorites.addActionListener(e -> showFavoritesScreen(frame));
         btnWatchHistory.addActionListener(e -> showWatchHistoryScreen(frame));
 
