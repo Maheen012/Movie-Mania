@@ -1,223 +1,120 @@
 package org.example.view;
 
+import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.stage.Stage;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
+
+import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 
-import javax.swing.*;
-import java.awt.*;
+public class LoginGUI extends Application {
+    private static MovieManager movieManager;
+    private static UserManager userManager;
+    private static String currentUsername;
 
-/**
- * A custom JButton with rounded edges for a modern look.
- */
-class RoundedButton extends JButton {
-    public RoundedButton(String text) {
-        super(text);
-        setContentAreaFilled(false);
-        setFocusPainted(false);
-        setBorderPainted(false);
+    public static void setManagers(MovieManager mm, UserManager um) {
+        movieManager = mm;
+        userManager = um;
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
-        Graphics2D g2 = (Graphics2D) g.create();
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2.setColor(getBackground());
-        g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
-        g2.setColor(getForeground());
-        FontMetrics fm = g2.getFontMetrics();
-        int x = (getWidth() - fm.stringWidth(getText())) / 2;
-        int y = (getHeight() + fm.getAscent()) / 2 - 2;
-        g2.drawString(getText(), x, y);
-        g2.dispose();
-        super.paintComponent(g);
+    public void start(Stage primaryStage) {
+        primaryStage.setTitle("Movie Mania - Login");
+
+        // UI Elements
+        Label lblUsername = new Label("Username:");
+        TextField txtUsername = new TextField();
+        Label lblPassword = new Label("Password:");
+        PasswordField txtPassword = new PasswordField();
+        Button btnLogin = new Button("Login");
+        Button btnSignUp = new Button("Sign Up");
+
+        Label lblMessage = new Label();
+
+        // Login Button Action
+        btnLogin.setOnAction(e -> {
+            String username = txtUsername.getText();
+            String password = txtPassword.getText();
+
+            // Check if credentials are for the admin user
+            if (username.equals("admin") && password.equals("admin123")) {
+                lblMessage.setText("Admin login successful!");
+
+                // Open the Admin GUI if credentials are correct
+                Platform.runLater(() -> {
+                    AdminGUI adminGUI = new AdminGUI();
+                    adminGUI.start(new Stage());
+                    primaryStage.close();
+                });
+
+                // Check if user credentials are valid using UserManager
+            } else if (userManager.authenticateUser(username, password)) {
+                currentUsername = username;
+                lblMessage.setText("Login successful!");
+
+                // Open the User GUI if user credentials are correct
+                Platform.runLater(() -> {
+                    UserGUI userGUI = new UserGUI();
+                    userGUI.setManagers(movieManager, userManager);
+                    userGUI.start(new Stage());
+                    primaryStage.close();
+                });
+
+            } else {
+                lblMessage.setText("Invalid credentials. Try again.");
+            }
+        });
+
+        // Sign Up Button Action
+        btnSignUp.setOnAction(e -> {
+            // Open sign-up form in a new window
+            Stage signUpStage = new Stage();
+            signUpStage.setTitle("Sign Up");
+
+            // UI elements for sign-up form
+            Label lblNewUsername = new Label("New Username:");
+            TextField txtNewUsername = new TextField();
+            Label lblNewPassword = new Label("New Password:");
+            PasswordField txtNewPassword = new PasswordField();
+            Button btnCreateAccount = new Button("Create Account");
+            Label lblSignUpMessage = new Label();
+
+            // Button action for creating account
+            btnCreateAccount.setOnAction(event -> {
+                String newUsername = txtNewUsername.getText();
+                String newPassword = txtNewPassword.getText();
+
+                // Add the new user using UserManager
+                if (!newUsername.isEmpty() && !newPassword.isEmpty()) {
+                    userManager.saveUserCredentials(newUsername, newPassword);
+                    lblSignUpMessage.setText("Account created successfully!");
+
+                    // Optionally, close sign-up window after successful creation
+                    signUpStage.close();
+                } else {
+                    lblSignUpMessage.setText("Please enter both username and password.");
+                }
+            });
+
+            // Layout for sign-up window
+            VBox signUpLayout = new VBox(10, lblNewUsername, txtNewUsername, lblNewPassword, txtNewPassword, btnCreateAccount, lblSignUpMessage);
+            signUpLayout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+            signUpStage.setScene(new Scene(signUpLayout, 300, 200));
+            signUpStage.show();
+        });
+
+        // Layout for the login screen
+        VBox layout = new VBox(10, lblUsername, txtUsername, lblPassword, txtPassword, btnLogin, btnSignUp, lblMessage);
+        layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
+
+        primaryStage.setScene(new Scene(layout, 300, 250));
+        primaryStage.show();
     }
 
-}
-
-/**
- * LoginGUI is responsible for handling the user authentication process, including user login, admin login, and sign-up.
- */
-public class LoginGUI {
-    private boolean isAdmin;
-    private boolean isAuthenticated;
-    private UserManager userManager;
-    private static String currentUsername;
-
-
-    /**
-     * Sets the username of the currently logged-in user.
-     *
-     * @param username The username to be set as the current user.
-     */
-    public static void setCurrentUsername(String username) {
-        currentUsername = username;
-    }
-
-    /**
-     * Gets the username of the currently logged-in user.
-     *
-     * @return the current username.
-     */
     public static String getCurrentUsername() {
         return currentUsername;
-    }
-
-    /**
-     * Checks if the logged-in user is an admin.
-     *
-     * @return true if the user is an admin, false otherwise.
-     */
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
-    public void waitForLogin() {
-        while (!isAuthenticated) {
-            try {
-                Thread.sleep(100); // Pause execution until the user logs in
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-
-    /**
-     * Constructor for the LoginGUI class, initializes authentication status and creates the login GUI.
-     */
-    public LoginGUI() {
-        userManager = new UserManager();
-        isAuthenticated = false;
-        isAdmin = false;
-
-        // Create the main login/sign-up frame
-        JFrame frame = new JFrame("Movie Mania");
-        frame.setSize(1200, 800);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(new GridLayout(3, 1, 10, 10));
-
-        // Create buttons for user login, admin login, and sign-up
-        JButton btnLoginUser = new RoundedButton("Login as User");
-        JButton btnLoginAdmin = new RoundedButton("Login as Admin");
-        JButton btnSignUp = new RoundedButton("Sign Up");
-
-        // Set button colors for improved UI
-        btnLoginUser.setBackground(new Color(30, 144, 255));
-        btnLoginUser.setForeground(Color.WHITE);
-        btnLoginAdmin.setBackground(new Color(220, 20, 60));
-        btnLoginAdmin.setForeground(Color.WHITE);
-        btnSignUp.setBackground(new Color(34, 139, 34));
-        btnSignUp.setForeground(Color.WHITE);
-
-        // Add buttons to the frame
-        frame.add(btnLoginUser);
-        frame.add(btnLoginAdmin);
-        frame.add(btnSignUp);
-
-        // Add action listeners to handle button clicks
-        btnLoginUser.addActionListener(e -> showLoginDialog(false));
-        btnLoginAdmin.addActionListener(e -> showLoginDialog(true));
-        btnSignUp.addActionListener(e -> showSignUpDialog());
-
-        frame.setVisible(true); // Make the frame visible
-    }
-
-    /**
-     * Shows the login dialog for user or admin login based on the isAdminLogin flag.
-     *
-     * @param isAdminLogin indicates whether to show the admin login dialog
-     */
-    private void showLoginDialog(boolean isAdminLogin) {
-        JDialog loginDialog = new JDialog();
-        loginDialog.setTitle(isAdminLogin ? "Login as Admin" : "Login as User");
-        loginDialog.setSize(1200, 800);
-        loginDialog.setLayout(new GridLayout(3, 2, 10, 10));
-
-        JLabel lblUsername = new JLabel("Username:");
-        JTextField txtUsername = new JTextField();
-        JLabel lblPassword = new JLabel("Password:");
-        JPasswordField txtPassword = new JPasswordField();
-        JButton btnLogin = new RoundedButton("Login");
-        btnLogin.setBackground(new Color(30, 144, 255));
-        btnLogin.setForeground(Color.WHITE);
-
-        // Add components to the login dialog
-        loginDialog.add(lblUsername);
-        loginDialog.add(txtUsername);
-        loginDialog.add(lblPassword);
-        loginDialog.add(txtPassword);
-        loginDialog.add(new JLabel());
-        loginDialog.add(btnLogin);
-
-        // Handle login logic
-        btnLogin.addActionListener(e -> {
-            String username = txtUsername.getText();
-            String password = new String(txtPassword.getPassword());
-
-            if (isAdminLogin) {
-                if (username.equals("admin") && password.equals("admin123")) {
-                    isAdmin = true;
-                    isAuthenticated = true;
-                    loginDialog.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(loginDialog, "Invalid admin credentials!", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } else {
-                if (userManager.authenticateUser(username, password)) {
-                    isAdmin = false;
-                    isAuthenticated = true;
-                    setCurrentUsername(username);
-                    loginDialog.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(loginDialog, "Invalid user credentials!", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        loginDialog.setVisible(true);
-    }
-
-    /**
-     * Shows the sign-up dialog for creating a new user.
-     */
-    private void showSignUpDialog() {
-        JDialog signUpDialog = new JDialog();
-        signUpDialog.setTitle("Sign Up");
-        signUpDialog.setSize(1200, 800);
-        signUpDialog.setLayout(new GridLayout(3, 2, 10, 10));
-
-        JLabel lblUsername = new JLabel("Username:");
-        JTextField txtUsername = new JTextField();
-        JLabel lblPassword = new JLabel("Password:");
-        JPasswordField txtPassword = new JPasswordField();
-        JButton btnSignUp = new RoundedButton("Sign Up");
-        btnSignUp.setBackground(new Color(34, 139, 34));
-        btnSignUp.setForeground(Color.WHITE);
-
-        // Add components to the sign-up dialog
-        signUpDialog.add(lblUsername);
-        signUpDialog.add(txtUsername);
-        signUpDialog.add(lblPassword);
-        signUpDialog.add(txtPassword);
-        signUpDialog.add(new JLabel());
-        signUpDialog.add(btnSignUp);
-
-        // Handle sign-up logic
-        btnSignUp.addActionListener(e -> {
-            String username = txtUsername.getText();
-            String password = new String(txtPassword.getPassword());
-
-            if (userManager.isUsernameTaken(username)) {
-                JOptionPane.showMessageDialog(signUpDialog, "Username already taken!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else if (username.isEmpty() || password.isEmpty()) {
-                JOptionPane.showMessageDialog(signUpDialog, "Username and password cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-                userManager.saveUserCredentials(username, password);
-                JOptionPane.showMessageDialog(signUpDialog, "Sign up successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
-                signUpDialog.dispose();
-            }
-        });
-
-        signUpDialog.setVisible(true);
     }
 }
