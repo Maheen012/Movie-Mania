@@ -1,269 +1,169 @@
 package org.example.view;
 
+import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 import org.example.model.Movie;
-import org.example.controller.MovieManager;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
-import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
-import java.io.IOException;
 import java.util.stream.Collectors;
 
-/**
- * MovieViewer provides the graphical user interface for displaying movie titles
- * and detailed information about each selected movie.
- */
 public class MovieViewer {
     private MovieManager movieManager;
     private UserManager userManager;
 
-    /**
-     * Constructor for MovieViewer class.
-     * Initializes the viewer with a MovieManager to manage movie data.
-     *
-     * @param movieManager The MovieManager to handle movie data and actions.
-     * @param userManager The UserManager to handle user-related actions.
-     */
     public MovieViewer(MovieManager movieManager, UserManager userManager) {
         this.movieManager = movieManager;
         this.userManager = userManager;
     }
 
-    public ImageIcon resizeImage(String imagePath, int targetWidth, int targetHeight) {
+    private ImageView resizeImage(String imagePath, int width, int height) {
         try {
-            // Debug: Print the image path
-            //System.out.println("Loading image from: " + imagePath);
-
-            // Load the original image
-            BufferedImage originalImage = ImageIO.read(getClass().getClassLoader().getResource(imagePath));
-
-            // Calculate the aspect ratio
-            double aspectRatio = (double) originalImage.getWidth() / originalImage.getHeight();
-
-            // Calculate the new dimensions while preserving the aspect ratio
-            int newWidth = targetWidth;
-            int newHeight = (int) (targetWidth / aspectRatio);
-
-            // If the calculated height exceeds the target height, adjust the dimensions
-            if (newHeight > targetHeight) {
-                newHeight = targetHeight;
-                newWidth = (int) (targetHeight * aspectRatio);
-            }
-
-            // Resize the image
-            Image resizedImage = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_SMOOTH);
-
-            // Convert the resized image to an ImageIcon
-            return new ImageIcon(resizedImage);
-        } catch (IOException e) {
+            Image image = new Image(getClass().getClassLoader().getResourceAsStream(imagePath));
+            ImageView imageView = new ImageView(image);
+            imageView.setFitWidth(width);
+            imageView.setFitHeight(height);
+            return imageView;
+        } catch (Exception e) {
             e.printStackTrace();
-            return null; // Return null if the image cannot be loaded
+            return new ImageView();
         }
     }
 
     public void showMovieTitlesScreen() {
-        // Create the movie titles frame
-        JFrame movieTitlesFrame = new JFrame("Movie Titles");
-        movieTitlesFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieTitlesFrame.setSize(1200, 800);
-        movieTitlesFrame.setLayout(new BorderLayout());
+        Stage movieTitlesStage = new Stage();
+        movieTitlesStage.setTitle("Movie Titles");
+        BorderPane root = new BorderPane();
 
-        // Create a panel for filter controls
-        JPanel filterPanel = new JPanel(new FlowLayout());
+        FlowPane filterPane = new FlowPane();
+        filterPane.setHgap(10);
+        filterPane.setPadding(new Insets(10));
 
-        // Add a label for the genre filter
-        JLabel genreLabel = new JLabel("Genre:");
-        filterPanel.add(genreLabel);
+        Label genreLabel = new Label("Genre:");
+        ComboBox<String> genreComboBox = new ComboBox<>();
+        genreComboBox.getItems().addAll("All", "Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Thriller");
+        genreComboBox.setValue("All");
 
-        // Genre filter with more genres
-        String[] genres = {"All", "Action", "Drama", "Comedy", "Horror", "Sci-Fi", "Thriller", "Romance", "Adventure", "Animation", "Crime", "Biography", "History", "Fantasy"};
-        JComboBox<String> genreComboBox = new JComboBox<>(genres);
-        filterPanel.add(genreComboBox);
+        Label yearLabel = new Label("Year:");
+        TextField yearField = new TextField();
+        yearField.setPromptText("Year");
 
-        // Year filter
-        JLabel yearLabel = new JLabel("Year:");
-        filterPanel.add(yearLabel);
-        JTextField yearField = new JTextField(5);
-        filterPanel.add(yearField);
+        Label ratingLabel = new Label("Rating:");
+        TextField ratingField = new TextField();
+        ratingField.setPromptText("Rating");
 
-        // Rating filter
-        JLabel ratingLabel = new JLabel("Rating:");
-        filterPanel.add(ratingLabel);
-        JTextField ratingField = new JTextField(5);
-        filterPanel.add(ratingField);
+        Label searchLabel = new Label("Title:");
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search by Title");
 
-        // Search by title
-        JLabel titleSearchLabel = new JLabel("Search by Title:");
-        filterPanel.add(titleSearchLabel);
-        JTextField titleSearchField = new JTextField(15);
-        filterPanel.add(titleSearchField);
+        Button searchButton = new Button("Search");
 
-        // Add a "Search" button for searching and filtering
-        JButton searchButton = new JButton("Search");
-        filterPanel.add(searchButton);
+        filterPane.getChildren().addAll(genreLabel, genreComboBox, yearLabel, yearField, ratingLabel, ratingField, searchLabel, searchField, searchButton);
+        root.setTop(filterPane);
 
-        // Add the filter panel to the top of the window
-        movieTitlesFrame.add(filterPanel, BorderLayout.NORTH);
+        GridPane movieGrid = new GridPane();
+        movieGrid.setHgap(10);
+        movieGrid.setVgap(10);
+        movieGrid.setPadding(new Insets(10));
 
-        // Create a panel to display the list of movies
-        JPanel movieListPanel = new JPanel(new GridLayout(0, 3, 10, 10));
-        movieListPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        ScrollPane scrollPane = new ScrollPane(movieGrid);
+        root.setCenter(scrollPane);
 
-        // Add a scroll pane to the movie list panel for scrolling through the list
-        JScrollPane scrollPane = new JScrollPane(movieListPanel);
-        movieTitlesFrame.add(scrollPane, BorderLayout.CENTER);
-
-        // Get the list of movies from the MovieManager
-        List<Movie> movies = movieManager.getMovies();
-
-        // Function to update the movie list based on filters and search
         Runnable updateMovieList = () -> {
-            movieListPanel.removeAll();
+            movieGrid.getChildren().clear();
+            List<Movie> movies = movieManager.getMovies();
 
-            String selectedGenre = (String) genreComboBox.getSelectedItem();
+            String selectedGenre = genreComboBox.getValue();
             String yearText = yearField.getText();
             String ratingText = ratingField.getText();
-            String titleSearchText = titleSearchField.getText().toLowerCase(); // Case-insensitive search
+            String searchText = searchField.getText().toLowerCase();
 
             List<Movie> filteredMovies = movies.stream()
                     .filter(movie -> selectedGenre.equals("All") || movie.getGenre().toLowerCase().contains(selectedGenre.toLowerCase()))
                     .filter(movie -> yearText.isEmpty() || String.valueOf(movie.getYear()).equals(yearText))
                     .filter(movie -> ratingText.isEmpty() || String.valueOf(movie.getRating()).equals(ratingText))
-                    .filter(movie -> titleSearchText.isEmpty() || movie.getTitle().toLowerCase().contains(titleSearchText))
+                    .filter(movie -> searchText.isEmpty() || movie.getTitle().toLowerCase().contains(searchText))
                     .collect(Collectors.toList());
 
-            if (filteredMovies.isEmpty()) {
-                // Show a message if no movies are found
-                JOptionPane.showMessageDialog(movieTitlesFrame, "No movies found!");
-            } else {
-                // Create a panel for each movie and add it to the list panel
-                for (Movie movie : filteredMovies) {
-                    JPanel moviePanel = new JPanel(new BorderLayout());
-                    moviePanel.setPreferredSize(new Dimension(200, 300));
-
-                    // Resize the movie cover image
-                    ImageIcon coverIcon = resizeImage(movie.getCoverImagePath(), 150, 200); // Resize to 150x200 pixels
-                    JLabel coverLabel = new JLabel(coverIcon);
-                    moviePanel.add(coverLabel, BorderLayout.CENTER);
-
-                    // Add the movie title below the cover
-                    JLabel titleLabel = new JLabel(movie.getTitle(), JLabel.CENTER);
-                    titleLabel.setFont(new Font("Arial", Font.BOLD, 14));
-                    moviePanel.add(titleLabel, BorderLayout.SOUTH);
-
-                    // Add action listener to show movie details when clicked
-                    moviePanel.addMouseListener(new java.awt.event.MouseAdapter() {
-                        public void mouseClicked(java.awt.event.MouseEvent evt) {
-                            showMovieDetailsScreen(movie);
-                            movieTitlesFrame.dispose();
-                        }
-                    });
-
-                    movieListPanel.add(moviePanel);
-                }
+            for (int i = 0; i < filteredMovies.size(); i++) {
+                Movie movie = filteredMovies.get(i);
+                VBox movieBox = new VBox(5);
+                movieBox.setPadding(new Insets(5));
+                movieBox.getChildren().add(resizeImage(movie.getCoverImagePath(), 150, 200));
+                Label titleLabel = new Label(movie.getTitle());
+                titleLabel.setStyle("-fx-font-weight: bold;");
+                movieBox.getChildren().add(titleLabel);
+                movieBox.setOnMouseClicked(event -> {
+                    showMovieDetailsScreen(movie);
+                    movieTitlesStage.close();
+                });
+                movieGrid.add(movieBox, i % 3, i / 3);
             }
-
-            movieListPanel.revalidate();
-            movieListPanel.repaint();
         };
 
-        // Add action listener to the search button (handles both search and filter)
-        searchButton.addActionListener(e -> updateMovieList.run());
+        searchButton.setOnAction(e -> updateMovieList.run());
+        searchField.setOnAction(e -> updateMovieList.run());
 
-        // Add action listener to the search field to trigger filtering on "Enter" key press
-        titleSearchField.addActionListener(e -> updateMovieList.run());
-
-        // Initial movie list update (show all movies by default)
         updateMovieList.run();
 
-        // Add a back button to return to the catalogue
-        JButton btnBack = new JButton("Back to Catalogue");
-        btnBack.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                movieTitlesFrame.dispose(); // Close the movie titles window
-            }
-        });
-        movieTitlesFrame.add(btnBack, BorderLayout.SOUTH); // Add button to the bottom
+        Button backButton = new Button("Back to Catalogue");
+        backButton.setOnAction(e -> movieTitlesStage.close());
+        root.setBottom(backButton);
 
-        movieTitlesFrame.setVisible(true); // Make the frame visible
+        Scene scene = new Scene(root, 1200, 800);
+        movieTitlesStage.setScene(scene);
+        movieTitlesStage.show();
     }
 
-
-    /**
-     * Displays a detailed screen for a selected movie.
-     * Shows movie details such as year, cast, rating, genre, and description with buttons for favorites
-     * and watch history
-     *
-     * @param movie The movie whose details will be displayed.
-     */
     public void showMovieDetailsScreen(Movie movie) {
-        userManager = new UserManager();
-        // Create movie details frame
-        JFrame movieDetailsFrame = new JFrame(movie.getTitle());
-        movieDetailsFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        movieDetailsFrame.setSize(1200, 800);
-        movieDetailsFrame.setLayout(new BorderLayout());
+        Stage movieDetailsStage = new Stage();
+        movieDetailsStage.setTitle(movie.getTitle());
+        BorderPane root = new BorderPane();
 
-        // Create and add the title label to the top of the window
-        JLabel lblMovieDetails = new JLabel(movie.getTitle(), JLabel.CENTER);
-        lblMovieDetails.setFont(new Font("Arial", Font.BOLD, 24));
-        movieDetailsFrame.add(lblMovieDetails, BorderLayout.NORTH);
+        Label titleLabel = new Label(movie.getTitle());
+        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        root.setTop(titleLabel);
 
-        // Create a text area to display the movie details
-        JTextArea txtMovieDetails = new JTextArea();
-        txtMovieDetails.setEditable(false); // Make the text area read-only
-        txtMovieDetails.setLineWrap(true); // Enable line wrapping
-        txtMovieDetails.setWrapStyleWord(true); // Wrap at word boundaries
-        txtMovieDetails.setFont(new Font("Arial", Font.PLAIN, 14));
-        txtMovieDetails.setText(
+        TextArea detailsArea = new TextArea(
                 "Year: " + movie.getYear() + "\n" +
                         "Main Cast: " + movie.getMainCast() + "\n" +
                         "Rating: " + movie.getRating() + "\n" +
                         "Genre: " + movie.getGenre() + "\n" +
                         "Description: " + movie.getDescription()
         );
+        detailsArea.setEditable(false);
+        root.setCenter(detailsArea);
 
-        // Add a scroll pane to the text area for scrolling through movie details
-        JScrollPane scrollPane = new JScrollPane(txtMovieDetails);
-        movieDetailsFrame.add(scrollPane, BorderLayout.CENTER);
+        FlowPane buttonPane = new FlowPane(10, 10);
+        buttonPane.setPadding(new Insets(10));
 
-        // Create a panel for the buttons
-        JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        Button btnAddToFavorites = new Button("Add to Favorites");
+        btnAddToFavorites.setOnAction(e -> userManager.addToFavorites(movie.getTitle()));
 
-        // Add "Add to Favorites" button
-        JButton btnAddToFavorites = new JButton("Add to Favorites");
-        btnAddToFavorites.addActionListener(e -> {
-            String movieTitle = movie.getTitle();
-            userManager.addToFavorites(movieTitle);
-        });
-        buttonPanel.add(btnAddToFavorites);
+        Button btnAddToWatchHistory = new Button("Add to Watch History");
+        btnAddToWatchHistory.setOnAction(e -> userManager.addToWatchHistory(movie.getTitle()));
 
-        // Add "Add to Watch History" button
-        JButton btnAddToWatchHistory = new JButton("Add to Watch History");
-        btnAddToWatchHistory.addActionListener(e -> {
-            String movieTitle = movie.getTitle();
-            userManager.addToWatchHistory(movieTitle);
-        });
-        buttonPanel.add(btnAddToWatchHistory);
-
-        // Add "Back to Movie Titles" button
-        JButton btnBack = new JButton("Back to Movie Titles");
-        btnBack.addActionListener(e -> {
-            movieDetailsFrame.dispose();
+        Button btnBack = new Button("Back to Movie Titles");
+        btnBack.setOnAction(e -> {
+            movieDetailsStage.close();
             showMovieTitlesScreen();
         });
-        buttonPanel.add(btnBack);
 
-        // Add the button panel to the south of the frame
-        movieDetailsFrame.add(buttonPanel, BorderLayout.SOUTH);
+        buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory, btnBack);
+        root.setBottom(buttonPane);
 
-        movieDetailsFrame.setVisible(true);
+        Scene scene = new Scene(root, 1200, 800);
+        movieDetailsStage.setScene(scene);
+        movieDetailsStage.show();
     }
 }
