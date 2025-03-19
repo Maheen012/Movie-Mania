@@ -6,7 +6,10 @@ import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import org.example.model.Movie;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -56,8 +59,7 @@ public class MovieManager {
         File movieFile = getMovieFilePath();
         if (movieFile == null) return;
 
-        try (CSVReader reader = new CSVReaderBuilder(new FileReader(movieFile)).build()) {
-            reader.readNext(); // Skip header
+        try (CSVReader reader = new CSVReaderBuilder(new FileReader(movieFile)).withSkipLines(1).build()) {
             List<String[]> myEntries = reader.readAll();
 
             for (String[] nextLine : myEntries) {
@@ -87,7 +89,7 @@ public class MovieManager {
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(movieFile))) {
             // Write the header row to the CSV file
-            String[] header = {"Movie ID", "Title", "Year", "Main Cast", "Rating", "Genre", "Description"};
+            String[] header = {"Movie ID", "Title", "Year", "Main Cast", "Rating", "Genre", "Description", "Cover Image Path"};
             writer.writeNext(header);
 
             // Write each movie's data to the CSV file
@@ -99,13 +101,13 @@ public class MovieManager {
                         movie.getMainCast(),
                         String.valueOf(movie.getRating()), // Convert rating to string
                         movie.getGenre(),
-                        movie.getDescription()
+                        movie.getDescription(),
+                        movie.getCoverImagePath()
                 };
 
                 // Write the movie data to the file
                 writer.writeNext(movieData);
             }
-
         } catch (IOException e) {
             e.printStackTrace(); // Print any exceptions encountered
         }
