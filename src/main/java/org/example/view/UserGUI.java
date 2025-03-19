@@ -65,10 +65,19 @@ public class UserGUI extends Application {
         ListView<String> favoritesList = new ListView<>();
         favoritesList.getItems().addAll(userManager.getFavoriteMovies(LoginGUI.getCurrentUsername()));
 
+        Button btnRemove = new Button("Remove");
+        btnRemove.setOnAction(e -> {
+            String selectedMovie = favoritesList.getSelectionModel().getSelectedItem();
+            if (selectedMovie != null) {
+                userManager.removeFromFavorites(selectedMovie);
+                favoritesList.getItems().remove(selectedMovie);
+            }
+        });
+
         Button btnBack = new Button("Back");
         btnBack.setOnAction(e -> favoritesStage.close());
 
-        VBox layout = new VBox(10, new Label("Your Favorite Movies"), favoritesList, btnBack);
+        VBox layout = new VBox(10, new Label("Your Favorite Movies"), favoritesList, btnRemove, btnBack);
         layout.setStyle("-fx-padding: 20;");
         favoritesStage.setScene(new Scene(layout, 400, 300));
         favoritesStage.show();
@@ -81,10 +90,19 @@ public class UserGUI extends Application {
         ListView<String> watchHistoryList = new ListView<>();
         watchHistoryList.getItems().addAll(userManager.getWatchHistory(LoginGUI.getCurrentUsername()));
 
+        Button btnRemove = new Button("Remove");
+        btnRemove.setOnAction(e -> {
+            String selectedMovie = watchHistoryList.getSelectionModel().getSelectedItem();
+            if (selectedMovie != null) {
+                userManager.removeFromWatchHistory(selectedMovie);
+                watchHistoryList.getItems().remove(selectedMovie);
+            }
+        });
+
         Button btnBack = new Button("Back");
         btnBack.setOnAction(e -> watchHistoryStage.close());
 
-        VBox layout = new VBox(10, new Label("Your Watch History"), watchHistoryList, btnBack);
+        VBox layout = new VBox(10, new Label("Your Watch History"), watchHistoryList, btnRemove, btnBack);
         layout.setStyle("-fx-padding: 20;");
         watchHistoryStage.setScene(new Scene(layout, 400, 300));
         watchHistoryStage.show();
