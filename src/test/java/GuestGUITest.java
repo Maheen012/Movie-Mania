@@ -1,7 +1,9 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
+import org.example.view.GuestGUI;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class GuestGUITest {
