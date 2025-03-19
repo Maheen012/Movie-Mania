@@ -1,6 +1,5 @@
 package org.example.view;
 
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +14,7 @@ import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 import org.example.model.Movie;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,24 +27,50 @@ public class MovieViewer {
         this.userManager = userManager;
     }
 
+    /**
+     * Resizes an image to the specified width and height.
+     *
+     * @param imagePath The path to the image in the resources folder.
+     * @param width     The desired width of the image.
+     * @param height    The desired height of the image.
+     * @return An ImageView object containing the resized image.
+     */
     private ImageView resizeImage(String imagePath, int width, int height) {
         try {
-            Image image = new Image(getClass().getClassLoader().getResourceAsStream(imagePath));
+            // Ensure image path starts from resources
+            InputStream inputStream = getClass().getResourceAsStream("/" + imagePath);
+            if (inputStream == null) {
+                System.err.println("Image not found: " + imagePath);
+                return getDefaultImageView(width, height); // Return default image
+            }
+            Image image = new Image(inputStream);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(width);
             imageView.setFitHeight(height);
             return imageView;
         } catch (Exception e) {
             e.printStackTrace();
-            return new ImageView();
+            return getDefaultImageView(width, height);
         }
     }
 
+    private ImageView getDefaultImageView(int width, int height) {
+        ImageView defaultImageView = new ImageView(new Image(getClass().getResourceAsStream("/default-cover.jpg")));
+        defaultImageView.setFitWidth(width);
+        defaultImageView.setFitHeight(height);
+        return defaultImageView;
+    }
+
+
+    /**
+     * Displays the movie titles screen with filters and a grid of movie posters.
+     */
     public void showMovieTitlesScreen() {
         Stage movieTitlesStage = new Stage();
         movieTitlesStage.setTitle("Movie Titles");
         BorderPane root = new BorderPane();
 
+        // Filter controls
         FlowPane filterPane = new FlowPane();
         filterPane.setHgap(10);
         filterPane.setPadding(new Insets(10));
@@ -71,6 +97,7 @@ public class MovieViewer {
         filterPane.getChildren().addAll(genreLabel, genreComboBox, yearLabel, yearField, ratingLabel, ratingField, searchLabel, searchField, searchButton);
         root.setTop(filterPane);
 
+        // Movie grid
         GridPane movieGrid = new GridPane();
         movieGrid.setHgap(10);
         movieGrid.setVgap(10);
@@ -79,10 +106,12 @@ public class MovieViewer {
         ScrollPane scrollPane = new ScrollPane(movieGrid);
         root.setCenter(scrollPane);
 
+        // Update movie list based on filters
         Runnable updateMovieList = () -> {
             movieGrid.getChildren().clear();
             List<Movie> movies = movieManager.getMovies();
 
+            // Apply filters
             String selectedGenre = genreComboBox.getValue();
             String yearText = yearField.getText();
             String ratingText = ratingField.getText();
@@ -97,6 +126,13 @@ public class MovieViewer {
 
             for (int i = 0; i < filteredMovies.size(); i++) {
                 Movie movie = filteredMovies.get(i);
+
+                // Check for empty or null image paths
+                if (movie.getCoverImagePath() == null || movie.getCoverImagePath().isEmpty()) {
+                    System.err.println("Empty or null image path for movie: " + movie.getTitle());
+                    continue; // Skip this movie
+                }
+
                 VBox movieBox = new VBox(5);
                 movieBox.setPadding(new Insets(5));
                 movieBox.getChildren().add(resizeImage(movie.getCoverImagePath(), 150, 200));
@@ -111,11 +147,14 @@ public class MovieViewer {
             }
         };
 
+        // Add event handlers for filters
         searchButton.setOnAction(e -> updateMovieList.run());
         searchField.setOnAction(e -> updateMovieList.run());
 
+        // Initial movie list update
         updateMovieList.run();
 
+        // Back button
         Button backButton = new Button("Back to Catalogue");
         backButton.setOnAction(e -> movieTitlesStage.close());
         root.setBottom(backButton);
@@ -125,15 +164,22 @@ public class MovieViewer {
         movieTitlesStage.show();
     }
 
+    /**
+     * Displays the details screen for a specific movie.
+     *
+     * @param movie The movie to display details for.
+     */
     public void showMovieDetailsScreen(Movie movie) {
         Stage movieDetailsStage = new Stage();
         movieDetailsStage.setTitle(movie.getTitle());
         BorderPane root = new BorderPane();
 
+        // Movie title
         Label titleLabel = new Label(movie.getTitle());
         titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
         root.setTop(titleLabel);
 
+        // Movie details
         TextArea detailsArea = new TextArea(
                 "Year: " + movie.getYear() + "\n" +
                         "Main Cast: " + movie.getMainCast() + "\n" +
@@ -144,6 +190,7 @@ public class MovieViewer {
         detailsArea.setEditable(false);
         root.setCenter(detailsArea);
 
+        // Buttons
         FlowPane buttonPane = new FlowPane(10, 10);
         buttonPane.setPadding(new Insets(10));
 

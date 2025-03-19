@@ -10,7 +10,9 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>23</java.version> <!-- Make sure the JDK version is compatible -->
+        <java.version>23</java.version> <!-- Updated to match your Java version -->
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -71,33 +73,40 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit5 -->
+        <!-- TestFX for JavaFX testing -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit5</artifactId>
             <version>4.0.18</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-junit</artifactId>
             <version>4.0.18</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.testfx/testfx-core -->
         <dependency>
             <groupId>org.testfx</groupId>
             <artifactId>testfx-core</artifactId>
             <version>4.0.18</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>
+        <resources>
+            <!-- Include the resources folder in the build -->
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.csv</include>
+                    <include>**/*.jpg</include>
+                    <include>**/*.png</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <!-- JavaFX Maven Plugin -->
             <plugin>
@@ -106,8 +115,6 @@
                 <version>0.0.8</version>
                 <configuration>
                     <mainClass>org.example.Main</mainClass> <!-- Your main class -->
-                    <!-- Specify JVM Arguments for module-path and add-modules -->
-
                 </configuration>
                 <executions>
                     <execution>
@@ -118,12 +125,24 @@
                 </executions>
             </plugin>
 
+            <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>9</source>
-                    <target>9</target>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Resources Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
         </plugins>
