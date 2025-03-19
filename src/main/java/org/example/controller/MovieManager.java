@@ -54,33 +54,27 @@ public class MovieManager {
      */
     public void readMovies() {
         File movieFile = getMovieFilePath();
-        if (movieFile == null) return; // Return if the file is not found
+        if (movieFile == null) return;
 
         try (CSVReader reader = new CSVReaderBuilder(new FileReader(movieFile)).build()) {
-            // Skip the header row
-            reader.readNext();
-
-            // Read all remaining lines from the file into a list
+            reader.readNext(); // Skip header
             List<String[]> myEntries = reader.readAll();
 
-            // Process each line from the CSV and create Movie objects
             for (String[] nextLine : myEntries) {
-                int movieId = Integer.parseInt(nextLine[0]); // Parse movie ID
+                int movieId = Integer.parseInt(nextLine[0]);
                 String title = nextLine[1];
-                int year = Integer.parseInt(nextLine[2]); // Parse year
+                int year = Integer.parseInt(nextLine[2]);
                 String mainCast = nextLine[3];
-                double rating = Double.parseDouble(nextLine[4]); // Parse rating
+                double rating = Double.parseDouble(nextLine[4]);
                 String genre = nextLine[5];
                 String description = nextLine[6];
                 String coverImagePath = nextLine[7];
 
-                // Create a Movie object and add it to the list
-                Movie movie = new Movie(movieId, title, year, mainCast, rating, genre, description,coverImagePath);
+                Movie movie = new Movie(movieId, title, year, mainCast, rating, genre, description, coverImagePath);
                 movies.add(movie);
             }
-
         } catch (IOException | CsvException e) {
-            e.printStackTrace(); // Print any exceptions encountered
+            e.printStackTrace();
         }
     }
 
