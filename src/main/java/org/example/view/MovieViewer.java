@@ -6,17 +6,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 import org.example.model.Movie;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MovieViewer {
@@ -69,13 +68,14 @@ public class MovieViewer {
     public void showMovieTitlesScreen() {
         Stage movieTitlesStage = new Stage();
         movieTitlesStage.setTitle("Movie Titles");
+
         BorderPane root = new BorderPane();
 
         // Filter controls
         FlowPane filterPane = new FlowPane();
         filterPane.setHgap(10);
         filterPane.setPadding(new Insets(10));
-        filterPane.setAlignment(Pos.CENTER);
+        filterPane.setAlignment(Pos.CENTER); // Center the filter pane
 
         Label genreLabel = new Label("Genre:");
         ComboBox<String> genreComboBox = new ComboBox<>();
@@ -105,13 +105,17 @@ public class MovieViewer {
 
         // Movie grid
         GridPane movieGrid = new GridPane();
-        movieGrid.setHgap(10);
-        movieGrid.setVgap(10);
-        movieGrid.setPadding(new Insets(10));
+        movieGrid.setHgap(20);
+        movieGrid.setVgap(20);
+        movieGrid.setPadding(new Insets(20));
+        movieGrid.setAlignment(Pos.CENTER);
 
         ScrollPane scrollPane = new ScrollPane(movieGrid);
         scrollPane.setFitToWidth(true);
         root.setCenter(scrollPane);
+
+        // Caching images
+        Map<String, ImageView> imageCache = new HashMap<>();
 
         // Update movie list based on filters
         Runnable updateMovieList = () -> {
@@ -132,14 +136,9 @@ public class MovieViewer {
 
             double windowWidth = movieTitlesStage.getWidth() - 40;
             int columnCount = Math.max((int) (windowWidth / 180), 1);
-            double totalWidth = columnCount * 180 + (columnCount - 1) * 10;
-
-            movieGrid.setAlignment(Pos.CENTER);
-            movieGrid.setPrefWidth(Math.max(windowWidth, totalWidth));
 
             for (int i = 0; i < filteredMovies.size(); i++) {
                 Movie movie = filteredMovies.get(i);
-
                 if (movie.getCoverImagePath() == null || movie.getCoverImagePath().isEmpty()) {
                     System.err.println("Empty or null image path for movie: " + movie.getTitle());
                     continue;
@@ -148,21 +147,26 @@ public class MovieViewer {
                 VBox movieBox = new VBox(5);
                 movieBox.setPadding(new Insets(5));
                 movieBox.setAlignment(Pos.CENTER);
-                movieBox.getChildren().add(resizeImage(movie.getCoverImagePath(), 150, 200));
+                movieBox.setStyle("-fx-background-color: #F0F0F0; -fx-border-radius: 10px; -fx-background-radius: 10px;");
+
+                ImageView imageView = imageCache.computeIfAbsent(movie.getCoverImagePath(), key -> resizeImage(movie.getCoverImagePath(), 150, 200));
+                movieBox.getChildren().add(imageView);
+
                 Label titleLabel = new Label(movie.getTitle());
                 titleLabel.setStyle("-fx-font-weight: bold;");
                 movieBox.getChildren().add(titleLabel);
+
                 movieBox.setOnMouseClicked(event -> {
                     showMovieDetailsScreen(movie);
                     movieTitlesStage.close();
                 });
+
                 movieGrid.add(movieBox, i % columnCount, i / columnCount);
             }
         };
 
         searchButton.setOnAction(e -> updateMovieList.run());
         searchField.setOnAction(e -> updateMovieList.run());
-
         movieTitlesStage.widthProperty().addListener((obs, oldVal, newVal) -> updateMovieList.run());
 
         updateMovieList.run();
@@ -184,27 +188,38 @@ public class MovieViewer {
     public void showMovieDetailsScreen(Movie movie) {
         Stage movieDetailsStage = new Stage();
         movieDetailsStage.setTitle(movie.getTitle());
+
         BorderPane root = new BorderPane();
+        root.setPadding(new Insets(20));
 
         // Movie title
         Label titleLabel = new Label(movie.getTitle());
-        titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
+        BorderPane.setAlignment(titleLabel, Pos.CENTER);
         root.setTop(titleLabel);
 
         // Movie details
-        TextArea detailsArea = new TextArea(
+        VBox detailsBox = new VBox(10);
+        detailsBox.setPadding(new Insets(20));
+        detailsBox.setStyle("-fx-background-color: #F0F0F0; -fx-border-radius: 10px; -fx-background-radius: 10px;");
+
+        Label detailsLabel = new Label(
                 "Year: " + movie.getYear() + "\n" +
                         "Main Cast: " + movie.getMainCast() + "\n" +
                         "Rating: " + movie.getRating() + "\n" +
                         "Genre: " + movie.getGenre() + "\n" +
                         "Description: " + movie.getDescription()
         );
-        detailsArea.setEditable(false);
-        root.setCenter(detailsArea);
+        detailsLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #34495E;");
+        detailsLabel.setWrapText(true);
+
+        detailsBox.getChildren().add(detailsLabel);
+        root.setCenter(detailsBox);
 
         // Buttons
-        FlowPane buttonPane = new FlowPane(10, 10);
-        buttonPane.setPadding(new Insets(10));
+        HBox buttonPane = new HBox(20);
+        buttonPane.setPadding(new Insets(20));
+        buttonPane.setAlignment(Pos.CENTER);
 
         Button btnAddToFavorites = new Button("Add to Favorites");
         btnAddToFavorites.setOnAction(e -> userManager.addToFavorites(movie.getTitle()));
@@ -221,7 +236,7 @@ public class MovieViewer {
         buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory, btnBack);
         root.setBottom(buttonPane);
 
-        Scene scene = new Scene(root, 1200, 800);
+        Scene scene = new Scene(root, 1200, 800); // Adjusted to match Movie Titles page size
         movieDetailsStage.setScene(scene);
         movieDetailsStage.show();
     }
