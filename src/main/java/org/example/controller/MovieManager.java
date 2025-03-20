@@ -19,7 +19,7 @@ import java.util.List;
  * MovieManager is responsible for managing movie data.
  */
 public class MovieManager {
-    private List<Movie> movies; // List to store movie objects
+    public List<Movie> movies; // List to store movie objects
 
     /**
      * Constructor to initialize the MovieManager with an empty list of movies.
@@ -136,6 +136,18 @@ public class MovieManager {
         }
         return null;
     }
+
+    public boolean deleteMovieById(int movieId) {
+        for (Movie movie : movies) {
+            if (movie.getMovieId() == movieId) {
+                movies.remove(movie);
+                saveMovies(); // Save the updated list to the CSV file
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
 
 

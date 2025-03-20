@@ -72,7 +72,15 @@ public class AdminGUI extends Application {
         layout.setPadding(new Insets(20));
         layout.setAlignment(Pos.CENTER);
 
+        // Find the next available movie ID
+        int nextMovieId = movieManager.getMovies().stream()
+                .mapToInt(Movie::getMovieId)
+                .max()
+                .orElse(0) + 1;
+
         // Input fields for movie details
+        TextField txtID = new TextField(String.valueOf(nextMovieId));
+        txtID.setEditable(false);  // Make it read-only since it's auto-generated
         TextField txtTitle = new TextField();
         txtTitle.setPromptText("Title");
         TextField txtYear = new TextField();
@@ -92,7 +100,18 @@ public class AdminGUI extends Application {
                 // Parse input and create a new movie
                 int year = Integer.parseInt(txtYear.getText().trim());
                 double rating = Double.parseDouble(txtRating.getText().trim());
-                Movie newMovie = new Movie(0, txtTitle.getText(), year, txtMainCast.getText(), rating, txtGenre.getText(), txtDescription.getText(), "");
+
+                Movie newMovie = new Movie(
+                        nextMovieId,
+                        txtTitle.getText(),
+                        year,
+                        txtMainCast.getText(),
+                        rating,
+                        txtGenre.getText(),
+                        txtDescription.getText(),
+                        ""
+                );
+
                 movieManager.getMovies().add(newMovie);
                 movieManager.saveMovies(); // Save the updated list to the CSV file
                 stage.close();
@@ -101,8 +120,10 @@ public class AdminGUI extends Application {
             }
         });
 
-        layout.getChildren().addAll(txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription, btnAdd);
-        stage.setScene(new Scene(layout, 400, 500));
+        layout.getChildren().addAll(txtID, txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription, btnAdd);
+
+        Scene scene = new Scene(layout, 400, 450);
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -131,13 +152,19 @@ public class AdminGUI extends Application {
             if (selectedMovie != null) {
                 // Extract movie ID from the selected item
                 int movieId = Integer.parseInt(selectedMovie.split(":")[0].trim());
-                boolean deleted = deleteMovieById(movieId);
+                boolean deleted = movieManager.deleteMovieById(movieId);
+
                 if (deleted) {
                     showAlert("Success", "Movie deleted successfully!");
+
+                    // Update the ComboBox to reflect the removal
+                    movieComboBox.getItems().clear();
+                    for (Movie movie : movieManager.getMovies()) {
+                        movieComboBox.getItems().add(movie.getMovieId() + ": " + movie.getTitle());
+                    }
                 } else {
                     showAlert("Error", "Movie not found!");
                 }
-                stage.close();
             } else {
                 showAlert("Error", "Please select a movie to delete.");
             }
@@ -147,6 +174,7 @@ public class AdminGUI extends Application {
         stage.setScene(new Scene(layout, 300, 200));
         stage.show();
     }
+
 
     /**
      * Displays the screen for updating a movie.
@@ -252,17 +280,6 @@ public class AdminGUI extends Application {
 
         stage.setScene(new Scene(layout, 400, 300));
         stage.show();
-    }
-
-    /**
-     * Deletes a movie by its ID.
-     *
-     * @param movieId The ID of the movie to delete.
-     * @return True if the movie was deleted, false otherwise.
-     */
-    private boolean deleteMovieById(int movieId) {
-        List<Movie> movies = movieManager.getMovies();
-        return movies.removeIf(movie -> movie.getMovieId() == movieId);
     }
 
     /**
