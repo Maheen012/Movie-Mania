@@ -9,5 +9,7 @@ module Movie.Mania {
 
     exports org.example.controller; // Export your controller packages (or any other packages you want to expose)
     exports org.example.view; // Export view packages
+    exports org.example.model; // Export the model package to allow access in tests
+
     opens org.example.view to javafx.fxml; // Open specific packages to JavaFX (FXML usage)
 }
