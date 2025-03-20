@@ -1,6 +1,7 @@
 package org.example.view;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -74,6 +75,7 @@ public class MovieViewer {
         FlowPane filterPane = new FlowPane();
         filterPane.setHgap(10);
         filterPane.setPadding(new Insets(10));
+        filterPane.setAlignment(Pos.CENTER);
 
         Label genreLabel = new Label("Genre:");
         ComboBox<String> genreComboBox = new ComboBox<>();
@@ -81,12 +83,16 @@ public class MovieViewer {
         genreComboBox.setValue("All");
 
         Label yearLabel = new Label("Year:");
-        TextField yearField = new TextField();
-        yearField.setPromptText("Year");
+        ComboBox<String> yearComboBox = new ComboBox<>();
+        yearComboBox.getItems().add("All Years");
+        for (int year = 2025; year >= 1900; year--) {
+            yearComboBox.getItems().add(String.valueOf(year));
+        }
+        yearComboBox.setValue("All Years");
 
         Label ratingLabel = new Label("Rating:");
-        TextField ratingField = new TextField();
-        ratingField.setPromptText("Rating");
+        Spinner<Double> ratingSpinner = new Spinner<>(0.0, 10.0, 0.0, 0.1);
+        ratingSpinner.setEditable(true);
 
         Label searchLabel = new Label("Title:");
         TextField searchField = new TextField();
@@ -94,7 +100,7 @@ public class MovieViewer {
 
         Button searchButton = new Button("Search");
 
-        filterPane.getChildren().addAll(genreLabel, genreComboBox, yearLabel, yearField, ratingLabel, ratingField, searchLabel, searchField, searchButton);
+        filterPane.getChildren().addAll(genreLabel, genreComboBox, yearLabel, yearComboBox, ratingLabel, ratingSpinner, searchLabel, searchField, searchButton);
         root.setTop(filterPane);
 
         // Movie grid
@@ -104,6 +110,7 @@ public class MovieViewer {
         movieGrid.setPadding(new Insets(10));
 
         ScrollPane scrollPane = new ScrollPane(movieGrid);
+        scrollPane.setFitToWidth(true);
         root.setCenter(scrollPane);
 
         // Update movie list based on filters
@@ -111,30 +118,36 @@ public class MovieViewer {
             movieGrid.getChildren().clear();
             List<Movie> movies = movieManager.getMovies();
 
-            // Apply filters
             String selectedGenre = genreComboBox.getValue();
-            String yearText = yearField.getText();
-            String ratingText = ratingField.getText();
+            String selectedYear = yearComboBox.getValue();
+            double selectedRating = ratingSpinner.getValue();
             String searchText = searchField.getText().toLowerCase();
 
             List<Movie> filteredMovies = movies.stream()
                     .filter(movie -> selectedGenre.equals("All") || movie.getGenre().toLowerCase().contains(selectedGenre.toLowerCase()))
-                    .filter(movie -> yearText.isEmpty() || String.valueOf(movie.getYear()).equals(yearText))
-                    .filter(movie -> ratingText.isEmpty() || String.valueOf(movie.getRating()).equals(ratingText))
+                    .filter(movie -> selectedYear.equals("All Years") || Integer.toString(movie.getYear()).equals(selectedYear))
+                    .filter(movie -> movie.getRating() >= selectedRating)
                     .filter(movie -> searchText.isEmpty() || movie.getTitle().toLowerCase().contains(searchText))
                     .collect(Collectors.toList());
+
+            double windowWidth = movieTitlesStage.getWidth() - 40;
+            int columnCount = Math.max((int) (windowWidth / 180), 1);
+            double totalWidth = columnCount * 180 + (columnCount - 1) * 10;
+
+            movieGrid.setAlignment(Pos.CENTER);
+            movieGrid.setPrefWidth(Math.max(windowWidth, totalWidth));
 
             for (int i = 0; i < filteredMovies.size(); i++) {
                 Movie movie = filteredMovies.get(i);
 
-                // Check for empty or null image paths
                 if (movie.getCoverImagePath() == null || movie.getCoverImagePath().isEmpty()) {
                     System.err.println("Empty or null image path for movie: " + movie.getTitle());
-                    continue; // Skip this movie
+                    continue;
                 }
 
                 VBox movieBox = new VBox(5);
                 movieBox.setPadding(new Insets(5));
+                movieBox.setAlignment(Pos.CENTER);
                 movieBox.getChildren().add(resizeImage(movie.getCoverImagePath(), 150, 200));
                 Label titleLabel = new Label(movie.getTitle());
                 titleLabel.setStyle("-fx-font-weight: bold;");
@@ -143,18 +156,17 @@ public class MovieViewer {
                     showMovieDetailsScreen(movie);
                     movieTitlesStage.close();
                 });
-                movieGrid.add(movieBox, i % 3, i / 3);
+                movieGrid.add(movieBox, i % columnCount, i / columnCount);
             }
         };
 
-        // Add event handlers for filters
         searchButton.setOnAction(e -> updateMovieList.run());
         searchField.setOnAction(e -> updateMovieList.run());
 
-        // Initial movie list update
+        movieTitlesStage.widthProperty().addListener((obs, oldVal, newVal) -> updateMovieList.run());
+
         updateMovieList.run();
 
-        // Back button
         Button backButton = new Button("Back to Catalogue");
         backButton.setOnAction(e -> movieTitlesStage.close());
         root.setBottom(backButton);
