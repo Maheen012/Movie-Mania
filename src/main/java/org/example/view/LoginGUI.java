@@ -42,6 +42,7 @@ public class LoginGUI extends Application {
             // Check if credentials are for the admin user
             if (username.equals("admin") && password.equals("admin123")) {
                 lblMessage.setText("Admin login successful!");
+                currentUsername = "admin"; // Set currentUsername to "admin"
 
                 // Open the Admin GUI if credentials are correct
                 Platform.runLater(() -> {
@@ -119,5 +120,8 @@ public class LoginGUI extends Application {
     }
     public static void setCurrentUsername(String username) {
         currentUsername = username;
+    }
+    public static boolean isAdmin() {
+        return currentUsername != null && currentUsername.equals("admin");
     }
 }

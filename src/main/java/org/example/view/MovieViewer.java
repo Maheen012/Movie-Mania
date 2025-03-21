@@ -221,22 +221,28 @@ public class MovieViewer {
         buttonPane.setPadding(new Insets(20));
         buttonPane.setAlignment(Pos.CENTER);
 
-        Button btnAddToFavorites = new Button("Add to Favorites");
-        btnAddToFavorites.setOnAction(e -> userManager.addToFavorites(movie.getTitle()));
-
-        Button btnAddToWatchHistory = new Button("Add to Watch History");
-        btnAddToWatchHistory.setOnAction(e -> userManager.addToWatchHistory(movie.getTitle()));
-
         Button btnBack = new Button("Back to Movie Titles");
+
+        // Only add "Add to Favorites" and "Add to Watch History" buttons if the user is not an admin
+        if (!LoginGUI.isAdmin()) {
+            Button btnAddToFavorites = new Button("Add to Favorites");
+            Button btnAddToWatchHistory = new Button("Add to Watch History");
+
+            btnAddToFavorites.setOnAction(e -> userManager.addToFavorites(movie.getTitle()));
+            btnAddToWatchHistory.setOnAction(e -> userManager.addToWatchHistory(movie.getTitle()));
+
+            buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory);
+        }
+
         btnBack.setOnAction(e -> {
             movieDetailsStage.close();
             showMovieTitlesScreen();
         });
 
-        buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory, btnBack);
+        buttonPane.getChildren().add(btnBack);
         root.setBottom(buttonPane);
 
-        Scene scene = new Scene(root, 1200, 800); // Adjusted to match Movie Titles page size
+        Scene scene = new Scene(root, 1200, 800);
         movieDetailsStage.setScene(scene);
         movieDetailsStage.show();
     }
