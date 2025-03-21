@@ -51,7 +51,7 @@ public class AdminGUI extends Application {
         btnAddMovie.setOnAction(e -> showAddMovieScreen());
         btnDeleteMovie.setOnAction(e -> showDeleteMovieScreen());
         btnUpdateMovie.setOnAction(e -> showUpdateMovieScreen());
-        btnViewMovies.setOnAction(e -> showMovieList());
+        btnViewMovies.setOnAction(e ->  new MovieViewer(movieManager, userManager).showMovieTitlesScreen());
         btnLogout.setOnAction(e -> primaryStage.close());
 
         root.getChildren().addAll(title, btnAddMovie, btnDeleteMovie, btnUpdateMovie, btnViewMovies, btnLogout);
