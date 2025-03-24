@@ -12,15 +12,26 @@ public class GuestGUI {
         this.userManager = userManager;
     }
 
+    /**
+     * Displays the movie catalog for guests.
+     */
     public void displayMovies() {
-        throw new RuntimeException("Movies cannot be displayed");
+        // Use the MovieViewer to display the movie catalog
+        MovieViewer movieViewer = new MovieViewer(movieManager, userManager);
+        movieViewer.showMovieTitlesScreen();
     }
 
+    /**
+     * Guests do not have access to watch history.
+     */
     public void getWatchHistory() {
-        // Leave this method unimplemented or return something invalid, so it doesn't throw the expected exception
+        System.out.println("Guests do not have access to watch history.");
     }
 
+    /**
+     * Guests do not have access to favorites.
+     */
     public void getFavorites() {
-        // Similarly, leave this unimplemented or return something invalid
+        System.out.println("Guests do not have access to favorites.");
     }
 }
