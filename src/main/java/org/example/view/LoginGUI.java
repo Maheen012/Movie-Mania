@@ -31,6 +31,7 @@ public class LoginGUI extends Application {
         PasswordField txtPassword = new PasswordField();
         Button btnLogin = new Button("Login");
         Button btnSignUp = new Button("Sign Up");
+        Button btnGuestLogin = new Button("Login as Guest");
 
         Label lblMessage = new Label();
 
@@ -107,21 +108,41 @@ public class LoginGUI extends Application {
             signUpStage.show();
         });
 
+        // Guest Login Button Action
+        // Inside the LoginGUI class, modify the guest login button action
+        btnGuestLogin.setOnAction(e -> {
+            currentUsername = "guest"; // Set currentUsername to "guest"
+            lblMessage.setText("Logged in as Guest");
+
+            // Open the Guest GUI and display movies
+            Platform.runLater(() -> {
+                GuestGUI guestGUI = new GuestGUI();
+                guestGUI.setManagers(movieManager, userManager);
+                guestGUI.displayMovies(); // Display movies for the guest
+            });
+        });
+
         // Layout for the login screen
-        VBox layout = new VBox(10, lblUsername, txtUsername, lblPassword, txtPassword, btnLogin, btnSignUp, lblMessage);
+        VBox layout = new VBox(10, lblUsername, txtUsername, lblPassword, txtPassword, btnLogin, btnSignUp, btnGuestLogin, lblMessage);
         layout.setStyle("-fx-padding: 20; -fx-alignment: center;");
 
-        primaryStage.setScene(new Scene(layout, 300, 250));
+        primaryStage.setScene(new Scene(layout, 300, 300)); // Increased height to accommodate the new button
         primaryStage.show();
     }
 
     public static String getCurrentUsername() {
         return currentUsername;
     }
+
     public static void setCurrentUsername(String username) {
         currentUsername = username;
     }
+
     public static boolean isAdmin() {
         return currentUsername != null && currentUsername.equals("admin");
+    }
+
+    public static boolean isGuest() {
+        return currentUsername != null && currentUsername.equals("guest");
     }
 }
