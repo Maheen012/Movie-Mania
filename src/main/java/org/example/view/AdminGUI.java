@@ -6,11 +6,17 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 import org.example.model.Movie;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 /**
@@ -64,68 +70,7 @@ public class AdminGUI extends Application {
     /**
      * Displays the screen for adding a new movie.
      */
-    private void showAddMovieScreen() {
-        Stage stage = new Stage();
-        stage.setTitle("Add Movie");
 
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-
-        // Find the next available movie ID
-        int nextMovieId = movieManager.getMovies().stream()
-                .mapToInt(Movie::getMovieId)
-                .max()
-                .orElse(0) + 1;
-
-        // Input fields for movie details
-        TextField txtID = new TextField(String.valueOf(nextMovieId));
-        txtID.setEditable(false);  // Make it read-only since it's auto-generated
-        TextField txtTitle = new TextField();
-        txtTitle.setPromptText("Title");
-        TextField txtYear = new TextField();
-        txtYear.setPromptText("Year");
-        TextField txtMainCast = new TextField();
-        txtMainCast.setPromptText("Main Cast");
-        TextField txtRating = new TextField();
-        txtRating.setPromptText("Rating");
-        TextField txtGenre = new TextField();
-        txtGenre.setPromptText("Genre");
-        TextArea txtDescription = new TextArea();
-        txtDescription.setPromptText("Description");
-
-        Button btnAdd = new Button("Add Movie");
-        btnAdd.setOnAction(e -> {
-            try {
-                // Parse input and create a new movie
-                int year = Integer.parseInt(txtYear.getText().trim());
-                double rating = Double.parseDouble(txtRating.getText().trim());
-
-                Movie newMovie = new Movie(
-                        nextMovieId,
-                        txtTitle.getText(),
-                        year,
-                        txtMainCast.getText(),
-                        rating,
-                        txtGenre.getText(),
-                        txtDescription.getText(),
-                        ""
-                );
-
-                movieManager.getMovies().add(newMovie);
-                movieManager.saveMovies(); // Save the updated list to the CSV file
-                stage.close();
-            } catch (NumberFormatException ex) {
-                showAlert("Invalid Input", "Please enter valid year and rating.");
-            }
-        });
-
-        layout.getChildren().addAll(txtID, txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription, btnAdd);
-
-        Scene scene = new Scene(layout, 400, 450);
-        stage.setScene(scene);
-        stage.show();
-    }
 
     /**
      * Displays the screen for deleting a movie.
@@ -208,6 +153,31 @@ public class AdminGUI extends Application {
         TextArea txtDescription = new TextArea();
         txtDescription.setPromptText("Description");
 
+        // Image upload
+        Label lblImage = new Label("Upload Cover Image:");
+        Button btnUploadImage = new Button("Choose Image");
+        Label lblImagePath = new Label("No image selected");
+        btnUploadImage.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Choose Cover Image");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                // Save the image to the resources/images folder
+                String imageName = movieComboBox.getValue().split(":")[0].trim() + "_" + selectedFile.getName();
+                String destinationPath = "src/main/resources/images/" + imageName;
+                try {
+                    Files.copy(selectedFile.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
+                    lblImagePath.setText("images/" + imageName); // Store relative path
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    showAlert("Error", "Failed to upload image.");
+                }
+            }
+        });
+
         Button btnUpdate = new Button("Update Movie");
 
         // When a movie is selected, populate the fields with its details
@@ -225,6 +195,7 @@ public class AdminGUI extends Application {
                     txtRating.setText(String.valueOf(movie.getRating()));
                     txtGenre.setText(movie.getGenre());
                     txtDescription.setText(movie.getDescription());
+                    lblImagePath.setText(movie.getCoverImagePath()); // Set current image path
                 }
             }
         });
@@ -244,6 +215,7 @@ public class AdminGUI extends Application {
                         movie.setRating(Double.parseDouble(txtRating.getText().trim()));
                         movie.setGenre(txtGenre.getText());
                         movie.setDescription(txtDescription.getText());
+                        movie.setCoverImagePath(lblImagePath.getText()); // Update image path
                         movieManager.saveMovies();
                         showAlert("Success", "Movie updated successfully!");
                         stage.close();
@@ -256,7 +228,8 @@ public class AdminGUI extends Application {
             }
         });
 
-        layout.getChildren().addAll(movieComboBox, txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription, btnUpdate);
+        layout.getChildren().addAll(movieComboBox, txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription,
+                lblImage, btnUploadImage, lblImagePath, btnUpdate);
         stage.setScene(new Scene(layout, 400, 500));
         stage.show();
     }
@@ -298,5 +271,93 @@ public class AdminGUI extends Application {
 
     public static void main(String[] args) {
         launch(args);
+    }
+    private void showAddMovieScreen() {
+        Stage stage = new Stage();
+        stage.setTitle("Add Movie");
+
+        VBox layout = new VBox(10);
+        layout.setPadding(new Insets(20));
+        layout.setAlignment(Pos.CENTER);
+
+        // Find the next available movie ID
+        int nextMovieId = movieManager.getMovies().stream()
+                .mapToInt(Movie::getMovieId)
+                .max()
+                .orElse(0) + 1;
+
+        // Input fields for movie details
+        TextField txtID = new TextField(String.valueOf(nextMovieId));
+        txtID.setEditable(false);  // Make it read-only since it's auto-generated
+        TextField txtTitle = new TextField();
+        txtTitle.setPromptText("Title");
+        TextField txtYear = new TextField();
+        txtYear.setPromptText("Year");
+        TextField txtMainCast = new TextField();
+        txtMainCast.setPromptText("Main Cast");
+        TextField txtRating = new TextField();
+        txtRating.setPromptText("Rating");
+        TextField txtGenre = new TextField();
+        txtGenre.setPromptText("Genre");
+        TextArea txtDescription = new TextArea();
+        txtDescription.setPromptText("Description");
+
+        // Image upload
+        Label lblImage = new Label("Upload Cover Image:");
+        Button btnUploadImage = new Button("Choose Image");
+        Label lblImagePath = new Label("No image selected");
+        btnUploadImage.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Choose Cover Image");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
+            File selectedFile = fileChooser.showOpenDialog(stage);
+            if (selectedFile != null) {
+                // Save the image to the resources/images folder
+                String imageName = nextMovieId + "_" + selectedFile.getName();
+                String destinationPath = "src/main/resources/images/" + imageName;
+                try {
+                    Files.copy(selectedFile.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
+                    lblImagePath.setText("images/" + imageName); // Store relative path
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    showAlert("Error", "Failed to upload image.");
+                }
+            }
+        });
+
+        Button btnAdd = new Button("Add Movie");
+        btnAdd.setOnAction(e -> {
+            try {
+                // Parse input and create a new movie
+                int year = Integer.parseInt(txtYear.getText().trim());
+                double rating = Double.parseDouble(txtRating.getText().trim());
+
+                Movie newMovie = new Movie(
+                        nextMovieId,
+                        txtTitle.getText(),
+                        year,
+                        txtMainCast.getText(),
+                        rating,
+                        txtGenre.getText(),
+                        txtDescription.getText(),
+                        lblImagePath.getText() // Set the image path
+                );
+
+                movieManager.getMovies().add(newMovie);
+                movieManager.saveMovies(); // Save the updated list to the CSV file
+                stage.close();
+            } catch (NumberFormatException ex) {
+                showAlert("Invalid Input", "Please enter valid year and rating.");
+            }
+        });
+
+        layout.getChildren().addAll(txtID, txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription,
+                lblImage, btnUploadImage, lblImagePath, btnAdd);
+
+        Scene scene = new Scene(layout, 400, 500);
+        stage.setScene(scene);
+        stage.show();
     }
 }
