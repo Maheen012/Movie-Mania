@@ -74,11 +74,6 @@ public class AdminGUI extends Application {
     }
 
     /**
-     * Displays the screen for adding a new movie.
-     */
-
-
-    /**
      * Displays the screen for deleting a movie.
      * Uses a ComboBox to select the movie by ID and name.
      */
@@ -173,7 +168,7 @@ public class AdminGUI extends Application {
             if (selectedFile != null) {
                 // Save the image to the resources/images folder
                 String imageName = movieComboBox.getValue().split(":")[0].trim() + "_" + selectedFile.getName();
-                String destinationPath = "src/main/resources/images/" + imageName;
+                String destinationPath = "target/classes/images/" + imageName;
                 try {
                     Files.copy(selectedFile.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
                     lblImagePath.setText("images/" + imageName); // Store relative path
@@ -241,27 +236,6 @@ public class AdminGUI extends Application {
     }
 
     /**
-     * Displays a list of all movies.
-     */
-    private void showMovieList() {
-        Stage stage = new Stage();
-        stage.setTitle("Movie List");
-
-        ListView<String> movieListView = new ListView<>();
-        for (Movie movie : movieManager.getMovies()) {
-            movieListView.getItems().add(movie.getTitle() + " (" + movie.getYear() + ")");
-        }
-
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-        layout.getChildren().add(movieListView);
-
-        stage.setScene(new Scene(layout, 400, 300));
-        stage.show();
-    }
-
-    /**
      * Displays an alert dialog with the specified title and message.
      *
      * @param title   The title of the alert.
@@ -322,7 +296,7 @@ public class AdminGUI extends Application {
             if (selectedFile != null) {
                 // Save the image to the resources/images folder
                 String imageName = nextMovieId + "_" + selectedFile.getName();
-                String destinationPath = "src/main/resources/images/" + imageName;
+                String destinationPath = "target/classes/images/" + imageName;
                 try {
                     Files.copy(selectedFile.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
                     lblImagePath.setText("images/" + imageName); // Store relative path
