@@ -1,6 +1,7 @@
 package org.example.view;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -57,7 +58,12 @@ public class AdminGUI extends Application {
         btnAddMovie.setOnAction(e -> showAddMovieScreen());
         btnDeleteMovie.setOnAction(e -> showDeleteMovieScreen());
         btnUpdateMovie.setOnAction(e -> showUpdateMovieScreen());
-        btnViewMovies.setOnAction(e ->  new MovieViewer(movieManager, userManager).showMovieTitlesScreen());
+        btnViewMovies.setOnAction(e -> {
+            Platform.runLater(() -> {
+                MovieViewer movieViewer = new MovieViewer(movieManager, userManager);
+                movieViewer.showMovieTitlesScreen();
+            });
+        });
         btnLogout.setOnAction(e -> primaryStage.close());
 
         root.getChildren().addAll(title, btnAddMovie, btnDeleteMovie, btnUpdateMovie, btnViewMovies, btnLogout);
