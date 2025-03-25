@@ -24,8 +24,8 @@ class LoginGUITest {
     @BeforeEach
     void setUp() {
         // Initialize the managers and LoginGUI
-        movieManager = new MovieManager(); // Assuming MovieManager has a no-arg constructor
-        userManager = new UserManager();   // Assuming UserManager has a no-arg constructor
+        movieManager = new MovieManager();
+        userManager = new UserManager();
         LoginGUI.setManagers(movieManager, userManager);
         loginGUI = new LoginGUI();
     }

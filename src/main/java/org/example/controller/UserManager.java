@@ -148,13 +148,18 @@ public class UserManager {
             return; // Don't save if the username is already taken
         }
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(userFile, true))) {
+        try (CSVWriter writer = new CSVWriter(new FileWriter(userFile, true),
+                CSVWriter.DEFAULT_SEPARATOR,
+                CSVWriter.NO_QUOTE_CHARACTER, // Avoid unnecessary quotes
+                CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                CSVWriter.DEFAULT_LINE_END)) {
             if (!fileExists) {
                 String[] header = {"Username", "Password"};
-                writer.writeNext(header);  // Writing header if file doesn't exist
+                writer.writeNext(header);
             }
 
-            String[] userData = {username, password};
+            // **Ensure correct formatting of username and password**
+            String[] userData = {username.trim(), password.trim()};
             writer.writeNext(userData);
 
         } catch (IOException e) {
