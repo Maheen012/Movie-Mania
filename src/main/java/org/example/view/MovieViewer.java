@@ -119,6 +119,7 @@ public class MovieViewer {
 
         // Update movie list based on filters
         Runnable updateMovieList = () -> {
+            imageCache.clear();
             movieGrid.getChildren().clear();
             List<Movie> movies = movieManager.getMovies();
 
