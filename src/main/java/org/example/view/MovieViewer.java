@@ -119,6 +119,7 @@ public class MovieViewer {
 
         // Update movie list based on filters
         Runnable updateMovieList = () -> {
+            imageCache.clear();
             movieGrid.getChildren().clear();
             List<Movie> movies = movieManager.getMovies();
 
@@ -223,13 +224,20 @@ public class MovieViewer {
 
         Button btnBack = new Button("Back to Movie Titles");
 
-        // Only add "Add to Favorites" and "Add to Watch History" buttons if the user is not an admin
-        if (!LoginGUI.isAdmin()) {
+        // Only add "Add to Favorites" and "Add to Watch History" buttons if the user is not an admin and not a guest
+        if (!LoginGUI.isAdmin() && !LoginGUI.isGuest()) {
             Button btnAddToFavorites = new Button("Add to Favorites");
             Button btnAddToWatchHistory = new Button("Add to Watch History");
 
-            btnAddToFavorites.setOnAction(e -> userManager.addToFavorites(movie.getTitle()));
-            btnAddToWatchHistory.setOnAction(e -> userManager.addToWatchHistory(movie.getTitle()));
+            btnAddToFavorites.setOnAction(e -> {
+                userManager.addToFavorites(movie.getTitle());
+                showAlert("Success", "Added to Favorites!");
+            });
+
+            btnAddToWatchHistory.setOnAction(e -> {
+                userManager.addToWatchHistory(movie.getTitle());
+                showAlert("Success", "Added to Watch History!");
+            });
 
             buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory);
         }
@@ -245,5 +253,19 @@ public class MovieViewer {
         Scene scene = new Scene(root, 1200, 800);
         movieDetailsStage.setScene(scene);
         movieDetailsStage.show();
+    }
+
+    /**
+     * Displays an alert dialog with the specified title and message.
+     *
+     * @param title   The title of the alert.
+     * @param message The message to display.
+     */
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
