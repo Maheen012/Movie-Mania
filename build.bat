@@ -1,0 +1,3 @@
+@echo off
+echo Running the JavaFX application...
+mvn javafx:run
