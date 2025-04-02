@@ -14,6 +14,7 @@ public class LoginGUI extends Application {
     private static MovieManager movieManager;
     private static UserManager userManager;
     private static String currentUsername;
+    private static String currentPassword;
 
     public static void setManagers(MovieManager mm, UserManager um) {
         movieManager = mm;
@@ -27,8 +28,10 @@ public class LoginGUI extends Application {
         // UI Elements
         Label lblUsername = new Label("Username:");
         TextField txtUsername = new TextField();
+        txtUsername.setId("Username");
         Label lblPassword = new Label("Password:");
         PasswordField txtPassword = new PasswordField();
+        txtPassword.setId("Password");
         Button btnLogin = new Button("Login");
         Button btnSignUp = new Button("Sign Up");
         Button btnGuestLogin = new Button("Login as Guest");
@@ -138,6 +141,14 @@ public class LoginGUI extends Application {
         currentUsername = username;
     }
 
+    public static String getCurrentPassword() {
+        return currentPassword;
+    }
+
+    public static void setCurrentPassword(String password) {
+        currentPassword = password;
+    }
+
     public static boolean isAdmin() {
         return currentUsername != null && currentUsername.equals("admin");
     }
@@ -145,4 +156,5 @@ public class LoginGUI extends Application {
     public static boolean isGuest() {
         return currentUsername != null && currentUsername.equals("guest");
     }
+
 }
