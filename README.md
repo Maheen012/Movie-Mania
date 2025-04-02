@@ -25,12 +25,10 @@ cd movie-mania
 ```
 
 ### 2. Run the Application
-1. Navigate to the Build Files folder
-2. Double-click on the **"build"** file to start the application.
+1. Double-click on the **"build"** file to start the application.
 
 ### 3. Run the Tests
-1. Navigate to the Build Files folder
-2. Double-click on the **"test"** file to run the tests.
+1. Double-click on the **"test"** file to run the tests.
 
 ## Interact with the Application
 
