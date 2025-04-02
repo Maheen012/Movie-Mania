@@ -7,18 +7,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 import org.example.model.Movie;
 
-import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +27,6 @@ public class MovieViewer {
         this.userManager = userManager;
     }
 
-<<<<<<< HEAD
     /**
      * Resizes an image to the specified width and height.
      *
@@ -43,14 +36,12 @@ public class MovieViewer {
      * @return An ImageView object containing the resized image.
      */
     public ImageView resizeImage(String imagePath, int width, int height) {
-=======
-    private ImageView resizeImage(String imagePath, int width, int height) {
->>>>>>> a0edc3903bdf16bb720bb96ad9b36b4ba1048482
         try {
+            // Ensure image path starts from resources
             InputStream inputStream = getClass().getResourceAsStream("/" + imagePath);
             if (inputStream == null) {
                 System.err.println("Image not found: " + imagePath);
-                return getDefaultImageView(width, height);
+                return getDefaultImageView(width, height); // Return default image
             }
             Image image = new Image(inputStream);
             ImageView imageView = new ImageView(image);
@@ -70,16 +61,21 @@ public class MovieViewer {
         return defaultImageView;
     }
 
+
+    /**
+     * Displays the movie titles screen with filters and a grid of movie posters.
+     */
     public void showMovieTitlesScreen() {
         Stage movieTitlesStage = new Stage();
         movieTitlesStage.setTitle("Movie Titles");
 
         BorderPane root = new BorderPane();
 
+        // Filter controls
         FlowPane filterPane = new FlowPane();
         filterPane.setHgap(10);
         filterPane.setPadding(new Insets(10));
-        filterPane.setAlignment(Pos.CENTER);
+        filterPane.setAlignment(Pos.CENTER); // Center the filter pane
 
         Label genreLabel = new Label("Genre:");
         ComboBox<String> genreComboBox = new ComboBox<>();
@@ -107,6 +103,7 @@ public class MovieViewer {
         filterPane.getChildren().addAll(genreLabel, genreComboBox, yearLabel, yearComboBox, ratingLabel, ratingSpinner, searchLabel, searchField, searchButton);
         root.setTop(filterPane);
 
+        // Movie grid
         GridPane movieGrid = new GridPane();
         movieGrid.setHgap(20);
         movieGrid.setVgap(20);
@@ -117,8 +114,10 @@ public class MovieViewer {
         scrollPane.setFitToWidth(true);
         root.setCenter(scrollPane);
 
+        // Caching images
         Map<String, ImageView> imageCache = new HashMap<>();
 
+        // Update movie list based on filters
         Runnable updateMovieList = () -> {
             imageCache.clear();
             movieGrid.getChildren().clear();
@@ -182,6 +181,11 @@ public class MovieViewer {
         movieTitlesStage.show();
     }
 
+    /**
+     * Displays the details screen for a specific movie.
+     *
+     * @param movie The movie to display details for.
+     */
     public void showMovieDetailsScreen(Movie movie) {
         Stage movieDetailsStage = new Stage();
         movieDetailsStage.setTitle(movie.getTitle());
@@ -189,17 +193,16 @@ public class MovieViewer {
         BorderPane root = new BorderPane();
         root.setPadding(new Insets(20));
 
+        // Movie title
         Label titleLabel = new Label(movie.getTitle());
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #2C3E50;");
         BorderPane.setAlignment(titleLabel, Pos.CENTER);
         root.setTop(titleLabel);
 
+        // Movie details
         VBox detailsBox = new VBox(10);
         detailsBox.setPadding(new Insets(20));
         detailsBox.setStyle("-fx-background-color: #F0F0F0; -fx-border-radius: 10px; -fx-background-radius: 10px;");
-
-        ImageView imageView = resizeImage(movie.getCoverImagePath(), 300, 400);
-        detailsBox.getChildren().add(imageView);
 
         Label detailsLabel = new Label(
                 "Year: " + movie.getYear() + "\n" +
@@ -214,42 +217,26 @@ public class MovieViewer {
         detailsBox.getChildren().add(detailsLabel);
         root.setCenter(detailsBox);
 
+        // Buttons
         HBox buttonPane = new HBox(20);
         buttonPane.setPadding(new Insets(20));
         buttonPane.setAlignment(Pos.CENTER);
 
         Button btnBack = new Button("Back to Movie Titles");
 
-        if (LoginGUI.isAdmin()) {
-            Button btnUpdate = new Button("Update Movie");
-            Button btnDelete = new Button("Delete Movie");
-
-            btnUpdate.setOnAction(e -> {
-                movieDetailsStage.close();
-                showUpdateMovieScreen(movie);
-            });
-
-            btnDelete.setOnAction(e -> {
-                boolean deleted = movieManager.deleteMovieById(movie.getMovieId());
-                if (deleted) {
-                    showAlert("Success", "Movie deleted successfully!");
-                    movieDetailsStage.close();
-                } else {
-                    showAlert("Error", "Failed to delete movie.");
-                }
-            });
-
-            buttonPane.getChildren().addAll(btnUpdate, btnDelete);
-        } else if (!LoginGUI.isGuest()) {
+        // Only add "Add to Favorites" and "Add to Watch History" buttons if the user is not an admin and not a guest
+        if (!LoginGUI.isAdmin() && !LoginGUI.isGuest()) {
             Button btnAddToFavorites = new Button("Add to Favorites");
             Button btnAddToWatchHistory = new Button("Add to Watch History");
 
             btnAddToFavorites.setOnAction(e -> {
                 userManager.addToFavorites(movie.getTitle());
+                showAlert("Success", "Added to Favorites!");
             });
 
             btnAddToWatchHistory.setOnAction(e -> {
                 userManager.addToWatchHistory(movie.getTitle());
+                showAlert("Success", "Added to Watch History!");
             });
 
             buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory);
@@ -268,7 +255,6 @@ public class MovieViewer {
         movieDetailsStage.show();
     }
 
-<<<<<<< HEAD
     /**
      * Displays an alert dialog with the specified title and message.
      *
@@ -276,88 +262,6 @@ public class MovieViewer {
      * @param message The message to display.
      */
     public void showAlert(String title, String message) {
-=======
-    private void showUpdateMovieScreen(Movie movie) {
-        Stage stage = new Stage();
-        stage.setTitle("Update Movie");
-
-        VBox layout = new VBox(10);
-        layout.setPadding(new Insets(20));
-        layout.setAlignment(Pos.CENTER);
-
-        TextField txtTitle = new TextField(movie.getTitle());
-        txtTitle.setPromptText("Title");
-        TextField txtYear = new TextField(String.valueOf(movie.getYear()));
-        txtYear.setPromptText("Year");
-        TextField txtMainCast = new TextField(movie.getMainCast());
-        txtMainCast.setPromptText("Main Cast");
-        TextField txtRating = new TextField(String.valueOf(movie.getRating()));
-        txtRating.setPromptText("Rating");
-        TextField txtGenre = new TextField(movie.getGenre());
-        txtGenre.setPromptText("Genre");
-        TextArea txtDescription = new TextArea(movie.getDescription());
-        txtDescription.setPromptText("Description");
-
-        Label lblImage = new Label("Current Cover Image: " + movie.getCoverImagePath());
-        Button btnUploadImage = new Button("Change Image");
-        Label lblImagePath = new Label(movie.getCoverImagePath());
-        btnUploadImage.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Choose Cover Image");
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            if (selectedFile != null) {
-                String imageName = movie.getMovieId() + "_" + selectedFile.getName();
-                String destinationPath = "target/classes/images/" + imageName;
-                try {
-                    Files.copy(selectedFile.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
-                    lblImagePath.setText("images/" + imageName);
-                    lblImage.setText("New Cover Image: " + imageName);
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    showAlert("Error", "Failed to upload image.");
-                }
-            }
-        });
-
-        Button btnUpdate = new Button("Update Movie");
-        btnUpdate.setOnAction(e -> {
-            try {
-                movie.setTitle(txtTitle.getText());
-                movie.setYear(Integer.parseInt(txtYear.getText().trim()));
-                movie.setMainCast(txtMainCast.getText());
-                movie.setRating(Double.parseDouble(txtRating.getText().trim()));
-                movie.setGenre(txtGenre.getText());
-                movie.setDescription(txtDescription.getText());
-                movie.setCoverImagePath(lblImagePath.getText());
-
-                movieManager.saveMovies();
-                showAlert("Success", "Movie updated successfully!");
-                stage.close();
-                showMovieDetailsScreen(movie);
-            } catch (NumberFormatException ex) {
-                showAlert("Invalid Input", "Please enter valid year and rating.");
-            }
-        });
-
-        Button btnCancel = new Button("Cancel");
-        btnCancel.setOnAction(e -> stage.close());
-
-        HBox buttonBox = new HBox(10, btnUpdate, btnCancel);
-        buttonBox.setAlignment(Pos.CENTER);
-
-        layout.getChildren().addAll(txtTitle, txtYear, txtMainCast, txtRating, txtGenre, txtDescription,
-                lblImage, btnUploadImage, buttonBox);
-
-        Scene scene = new Scene(layout, 400, 500);
-        stage.setScene(scene);
-        stage.show();
-    }
-
-    private void showAlert(String title, String message) {
->>>>>>> a0edc3903bdf16bb720bb96ad9b36b4ba1048482
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
