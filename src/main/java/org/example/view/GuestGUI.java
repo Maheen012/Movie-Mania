@@ -1,5 +1,6 @@
 package org.example.view;
 
+import javafx.application.Platform;
 import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 
@@ -16,22 +17,27 @@ public class GuestGUI {
      * Displays the movie catalog for guests.
      */
     public void displayMovies() {
-        // Use the MovieViewer to display the movie catalog
-        MovieViewer movieViewer = new MovieViewer(movieManager, userManager);
-        movieViewer.showMovieTitlesScreen();
+        Platform.runLater(() -> {
+            MovieViewer movieViewer = new MovieViewer(movieManager, userManager);
+            movieViewer.showMovieTitlesScreen();
+        });
     }
 
     /**
      * Guests do not have access to watch history.
+     *
+     * @throws UnsupportedOperationException if a guest attempts to view watch history.
      */
     public void getWatchHistory() {
-        System.out.println("Guests do not have access to watch history.");
+        throw new UnsupportedOperationException("Guests cannot access watch history");
     }
 
     /**
      * Guests do not have access to favorites.
+     *
+     * @throws UnsupportedOperationException if a guest attempts to access favorites.
      */
     public void getFavorites() {
-        System.out.println("Guests do not have access to favorites.");
+        throw new UnsupportedOperationException("Guests cannot access favorites");
     }
 }

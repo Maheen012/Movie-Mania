@@ -234,12 +234,10 @@ public class MovieViewer {
 
             btnAddToFavorites.setOnAction(e -> {
                 userManager.addToFavorites(movie.getTitle());
-                showAlert("Success", "Added to Favorites!");
             });
 
             btnAddToWatchHistory.setOnAction(e -> {
                 userManager.addToWatchHistory(movie.getTitle());
-                showAlert("Success", "Added to Watch History!");
             });
 
             buttonPane.getChildren().addAll(btnAddToFavorites, btnAddToWatchHistory);

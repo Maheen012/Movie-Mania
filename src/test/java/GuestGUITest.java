@@ -2,8 +2,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.example.controller.MovieManager;
 import org.example.controller.UserManager;
 import org.example.view.GuestGUI;
+import javafx.application.Platform;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class GuestGUITest {
@@ -11,8 +12,15 @@ public class GuestGUITest {
     private UserManager userManager;
     private GuestGUI guestGUI;
 
+    @BeforeAll
+    static void initJavaFX() {
+        // Initialize the JavaFX toolkit once for all tests
+        Platform.startup(() -> {});
+    }
+
     @BeforeEach
     void setUp() {
+        // Initialize the managers and GuestGUI
         movieManager = new MovieManager();
         userManager = new UserManager();
         guestGUI = new GuestGUI();
@@ -21,10 +29,9 @@ public class GuestGUITest {
 
     @Test
     void testGuestCanViewMovies() {
-        // Guest should be able to view the movie catalog
-        assertDoesNotThrow(() -> {
-            guestGUI.displayMovies();
-        }, "GuestGUI should be able to display movies without errors");
+        // Guest should be able to view the movie catalog without exceptions
+        assertDoesNotThrow(() -> guestGUI.displayMovies(),
+                "GuestGUI should be able to display movies without errors");
     }
 
     @Test
