@@ -1,6 +1,6 @@
 # Movie Mania
 
-Movie Mania is a GUI-based application that allows users to manage and interact with a collection of movies. Users can sign up, sign in, track watch history, manage their favorites list, and search movies. Admins have special privileges to add, update, delete movies, and manage users. If users don't want to sign up, they can view our catalogue by logging as a guest.
+Movie Mania is a GUI-based application that allows users to manage and interact with a collection of movies. Users can sign up, sign in, track watch history, manage their favorites list, and search movies. Admins have special privileges to add, update and delete movies from the catalogue. If users don't want to sign up, they can view our catalogue by logging in as a guest.
 
 ---
 
@@ -26,11 +26,11 @@ cd movie-mania
 
 ### 2. Run the Application
 1. Navigate to the Build Files folder
-2. Double-click on the **build** file to start the application.
+2. Double-click on the **"build"** file to start the application.
 
-### 2. Run the Tests
+### 3. Run the Tests
 1. Navigate to the Build Files folder
-2. Double-click on the **test** file to run the tests.
+2. Double-click on the **"test"** file to run the tests.
 
 ## Interact with the Application
 
@@ -55,9 +55,9 @@ To sign in as **Admin**, use the following credentials:
 Admins have full control over the movie catalogue. Here's how to navigate through the application:
 
 - **Add Movie**: Click on the **Add Movie** button, input movie details, and click **Add Movie** to add the movie to the catalogue.
-- **View Movies**: Click on the **View Movies** button to be able to update, delete and view movies in the catalogue.
-      - **Update Movie**: Select a movie from the list, click **Update Movie** to update movie details.
-      - **Delete Movie**: Select a movie from the catalogue and click **Delete** to delete a movie from the catalogue.
+- **View Movies**: Click on the **View Movies** button to update, delete, and view movies in the catalogue.
+  - **Update Movie**: Select a movie from the list, click **Update Movie** to update movie details.
+  - **Delete Movie**: Select a movie from the catalogue and click **Delete** to remove it from the catalogue.
 - **Logout**: To logout, simply click the **Logout** button.
 
 ---
