@@ -12,4 +12,5 @@ module Movie.Mania {
     exports org.example.model; // Export the model package to allow access in tests
 
     opens org.example.view to javafx.fxml; // Open specific packages to JavaFX (FXML usage)
+
 }

@@ -35,7 +35,7 @@ public class MovieViewer {
      * @param height    The desired height of the image.
      * @return An ImageView object containing the resized image.
      */
-    private ImageView resizeImage(String imagePath, int width, int height) {
+    public ImageView resizeImage(String imagePath, int width, int height) {
         try {
             // Ensure image path starts from resources
             InputStream inputStream = getClass().getResourceAsStream("/" + imagePath);
@@ -261,7 +261,7 @@ public class MovieViewer {
      * @param title   The title of the alert.
      * @param message The message to display.
      */
-    private void showAlert(String title, String message) {
+    public void showAlert(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
