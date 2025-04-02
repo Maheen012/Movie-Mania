@@ -1,23 +1,6 @@
 # Movie Mania
 
-Movie Mania is a Java-based application for managing movies. It provides separate interfaces for **Admin** and **User** roles. Admins can add, delete, update, and view movies, while users can view movies and access additional features like favorites and watch history.
-
----
-
-## Features
-
-### Admin Features
-- **Add Movie**: Add a new movie with details like title, year, main cast, rating, genre, and description.
-- **Delete Movie**: Delete a movie by its title.
-- **Update Movie**: Update the details of an existing movie.
-- **View Movies**: View a list of all movies.
-- **Logout**: Log out
-
-### User Features
-- **View Movies**: View a list of all movies.
-- **View Favorites**: View a list of favorite movies.
-- **Watch History**: View watch history.
-- **Logout**: Log out
+Movie Mania is a GUI-based application that allows users to manage and interact with a collection of movies. Users can sign up, sign in, track watch history, manage their favorites list, and search movies. Admins have special privileges to add, update and delete movies from the catalogue. If users don't want to sign up, they can view our catalogue by logging in as a guest.
 
 ---
 
@@ -27,7 +10,7 @@ Before running the application, ensure you have the following installed:
 
 - **Java Development Kit (JDK)**: Version 11 or higher.
 - **Maven**: For building and managing dependencies.
-- **IntelliJ IDEA**: For running the application.
+- **Batch Files** are available on our repository to automatically run the application and tests.
   
 ---
 
@@ -41,41 +24,78 @@ git clone https://github.com/Maheen012/Movie-Mania.git
 cd movie-mania
 ```
 
-### 2. Import the Project into IntelliJ IDEA
-1. Open IntelliJ IDEA.
-2. Click on **Open**.
-3. Navigate to the directory where you cloned the repository and select the root folder of the project (movie-mania).
-4. Click **OK** to import the project.
+### 2. Run the Application
+1. Double-click on the **"build"** file to start the application.
 
-IntelliJ IDEA will automatically recognize it as a Maven project and download the required dependencies.
-
-### 3. Run the Main File
-1. In IntelliJ, locate the `Main.java` file inside the `src/main/java/org/example` directory.
-2. Right-click the file and select **Run 'Main'** or click the green play button on the top of the page.
-3. Alternatively, you can press `Shift + F10` to run the application.
+### 3. Run the Tests
+1. Double-click on the **"test"** file to run the tests.
 
 ## Interact with the Application
 
-After running the `Main.java` file, you'll be prompted with the login screen. Here's what to do next:
+### Sign Up:
+- Enter a unique username and password.
+- Click **Sign Up** to register.
 
-#### If you're logging in as a **User**:
-1. You will need to **sign up** first before you can log in. Provide a **username** and **password** during sign-up.
-2. Once signed up, log in with your username and password to access the user features.
-3. You can **view all movies**, **view favorites** and **view watch history**.
+### Sign In:
+To sign in as **User**:
+- Enter your username and password and click **Login**.
+  
+To sign in as **Guest**:
+- Click the **Login as Guest** button.
 
-#### If you're logging in as an **Admin**:
-1. Use the following credentials to log in:
-   - **Username**: `admin`
-   - **Password**: `admin123`
-2. As an admin, you will have access to the following features:
-   - **Add Movie**: Add a new movie with details like title, year, main cast, rating, genre, and description.
-   - **Delete Movie**: Delete a movie by its title.
-   - **Update Movie**: Update the details of an existing movie.
-   - **View Movies**: View a list of all movies.
+To sign in as **Admin**, use the following credentials:
+- **Username**: `admin`
+- **Password**: `admin123`
 
-### Logout
+---
 
-Once you're done interacting with the application, you can **log out** by clicking the **Logout** button, which will close the current session and terminate the application.
+### A. Admin Access
+Admins have full control over the movie catalogue. Here's how to navigate through the application:
+
+- **Add Movie**: Click on the **Add Movie** button, input movie details, and click **Add Movie** to add the movie to the catalogue.
+- **View Movies**: Click on the **View Movies** button to update, delete, and view movies in the catalogue.
+  - **Update Movie**: Select a movie from the list, click **Update Movie** to update movie details.
+  - **Delete Movie**: Select a movie from the catalogue and click **Delete** to remove it from the catalogue.
+- **Logout**: To logout, simply click the **Logout** button.
+
+---
+
+### B. User Access
+Users have access to personalized features like watch history, favorites, and catalogue browsing. Here's how to navigate:
+
+- **View Movies**: Click on any movie cover in the catalogue to view its details.
+- **Search and Filter Movies**: Enter keywords and / or select different filters in the search bar to find movies.
+- **Favorites List**: While viewing a movie, click the **Add to Favorites** button to save it in your favorites list. Then, view your saved favorites in **View Favorites**.
+- **Watch History**: While viewing a movie, click the **Add to Watch History** button to save it in your watch history list. Then, view your changes in **Watch History**.
+- **Logout**: To logout, simply click the **Logout** button.
+
+---
+
+### C. Guest Access
+Guests have limited access to the system and can only browse the movie catalog. Guests can simply click the **Login as Guest** button on the main page and then they'll automatically be redirected to our movie catalogue for browsing movies.
+
+## How the Code is Organized in Our Repository
+
+The project is structured into three main components:
+
+### **Controller**
+- **UserManager.java**: Handles user data, favorites, and watch history.
+- **MovieManager.java**: Handles the movie database.
+
+### **Model**
+- **User.java**: Represents the user object with properties like username and password.
+- **Movie.java**: Represents the movie object with properties like movie ID, title, year, main cast, rating, genre, description and movie cover.
+
+### **View**
+- **AdminGUI.java**: Admin interface for managing movie catalogue, users, and movie operations (add, update, delete).
+- **GuestGUI.java**: Guest interface for browsing movies and viewing movie details.
+- **UserGUI.java**: User interface for logged-in users, displaying personal favorites, watch history, and browsing movies.
+- **MovieViewer.java**: Displays the movie catalogue and its details when a movie is selected.
+- **LoginGUI.java**: Handles user sign-up, sign-in, and authentication.
+
+### **Main.java**
+- The entry point to start the application and launch the appropriate GUI based on user role (Admin, User, Guest).
+
 
 
 
