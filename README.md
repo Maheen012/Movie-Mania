@@ -21,7 +21,7 @@ Clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/Maheen012/Movie-Mania.git
-cd movie-mania
+cd Movie-Mania
 ```
 
 ### 2. Run the Application
