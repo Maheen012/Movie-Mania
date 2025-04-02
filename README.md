@@ -34,15 +34,16 @@ cd movie-mania
 
 ## Interact with the Application
 
-#### Sign Up:
+### Sign Up:
 - Enter a unique username and password.
 - Click **Sign Up** to register.
 
-#### Sign In:
-- Enter your username and password.
-- Click **Sign In** to log in securely to the app.
-
-To sign in as **Guest**, just click the **Login as Guest** button.
+### Sign In:
+To sign in as **User**:
+- Enter your username and password and click **Login**.
+  
+To sign in as **Guest**:
+- Click the **Login as Guest** button.
 
 To sign in as **Admin**, use the following credentials:
 - **Username**: `admin`
@@ -53,22 +54,22 @@ To sign in as **Admin**, use the following credentials:
 ### A. Admin Access
 Admins have full control over the movie catalogue. Here's how to navigate through the application:
 
-- **Add Movie**: Click on the "Add Movie" button, input movie details (title, year, genre, etc.), and click **Add Movie** to add the movie to the catalogue.
-- **View Movies**: Click on the "View Movies" button to be able to update, delete and view movies in the catalogue
+- **Add Movie**: Click on the **Add Movie** button, input movie details, and click **Add Movie** to add the movie to the catalogue.
+- **View Movies**: Click on the **View Movies** button to be able to update, delete and view movies in the catalogue.
       - **Update Movie**: Select a movie from the list, click **Update Movie** to update movie details.
       - **Delete Movie**: Select a movie from the catalogue and click **Delete** to delete a movie from the catalogue.
-- **Log Out**: To log out, simply click the **Logout** button.
+- **Logout**: To logout, simply click the **Logout** button.
 
 ---
 
 ### B. User Access
 Users have access to personalized features like watch history, favorites, and catalogue browsing. Here's how to navigate:
 
-- **View Movies**: Click on any movie cover in the catalogue to view its details
+- **View Movies**: Click on any movie cover in the catalogue to view its details.
 - **Search and Filter Movies**: Enter keywords and / or select different filters in the search bar to find movies.
 - **Favorites List**: While viewing a movie, click the **Add to Favorites** button to save it in your favorites list. Then, view your saved favorites in **View Favorites**.
 - **Watch History**: While viewing a movie, click the **Add to Watch History** button to save it in your watch history list. Then, view your changes in **Watch History**.
-- **Log Out**: To log out, click the **Log Out** button.
+- **Logout**: To logout, simply click the **Logout** button.
 
 ---
 
