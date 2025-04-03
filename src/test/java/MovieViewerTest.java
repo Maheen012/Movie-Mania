@@ -53,4 +53,16 @@ class MovieViewerTest {
         assertDoesNotThrow(() -> Platform.runLater(() -> movieViewer.showAlert("Test Title", "Test Message")),
                 "Should not throw an exception when showing an alert.");
     }
+
+
+
+    @Test
+    void testAppLaunch() {
+        Platform.runLater(() -> {
+            assertNotNull(primaryStage, "Primary stage should not be null.");
+            assertTrue(primaryStage.isShowing(), "Application window should be visible.");
+        });
+    }
+
+
 }
