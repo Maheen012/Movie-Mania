@@ -66,20 +66,16 @@ public class GuestGUITest {
         // INTEGRATION TEST:
         // Verifies that displayMovies() correctly uses MovieManager and UserManager
         // to initialize MovieViewer and display the movie titles screen.
-
         CountDownLatch latch = new CountDownLatch(1);
 
         Platform.runLater(() -> {
             try {
                 guestGUI.displayMovies();
-                // Ideally, we should check if MovieViewer is properly launched.
-                // Example (if MovieViewer had an `isMovieScreenShown()` method):
-                // assertTrue(movieViewer.isMovieScreenShown(), "Movie screen should be displayed");
             } finally {
                 latch.countDown();
             }
         });
 
-        latch.await(); // Wait for the JavaFX thread to finish execution
+        latch.await();
     }
 }
