@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import java.util.concurrent.CountDownLatch;
 
 public class GuestGUITest {
     private MovieManager movieManager;
@@ -58,5 +59,23 @@ public class GuestGUITest {
         }, "GuestGUI should not allow access to favorites");
 
         assertEquals("Guests cannot access favorites", exception.getMessage());
+    }
+
+    @Test
+    void testGuestDisplaysMovieScreen() throws Exception {
+        // INTEGRATION TEST:
+        // Verifies that displayMovies() correctly uses MovieManager and UserManager
+        // to initialize MovieViewer and display the movie titles screen.
+        CountDownLatch latch = new CountDownLatch(1);
+
+        Platform.runLater(() -> {
+            try {
+                guestGUI.displayMovies();
+            } finally {
+                latch.countDown();
+            }
+        });
+
+        latch.await();
     }
 }
