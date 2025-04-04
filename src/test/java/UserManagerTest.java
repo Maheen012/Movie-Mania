@@ -10,15 +10,16 @@ import java.io.FileNotFoundException;
 public class UserManagerTest {
 
     // Path to the favorites CSV file
-    private static final String FAVORITES_CSV_PATH = "resources/favorites.csv";
+    private static final String FAVORITES_CSV_PATH = "src/test/TestResources/favorites.csv";
+
 
     // Set up the test environment by ensuring the resources directory and favorites CSV file exist
     @BeforeEach
     public void setUp() throws IOException {
-        // Ensure the resources directory exists
-        File resourcesDir = new File("resources");
-        if (!resourcesDir.exists()) {
-            resourcesDir.mkdir();  // Create directory if it doesn't exist
+        // Ensure the TestResources directory exists
+        File testResourcesDir = new File("src/test/TestResources");
+        if (!testResourcesDir.exists()) {
+            testResourcesDir.mkdirs();  // Create directory if it doesn't exist
         }
 
         // Ensure the favorites.csv file exists
@@ -27,11 +28,12 @@ public class UserManagerTest {
             favoritesFile.createNewFile();  // Create file if it doesn't exist
         }
 
-        // Clear the contents of favorites.csv file to start fresh for each test
+        // Clear the contents of favorites.csv file before each test
         try (FileWriter writer = new FileWriter(favoritesFile, false)) {
             writer.write(""); // Clear the file before each test
         }
     }
+
 
     // Test case IT-01-TB: adminCanAddMoviesAfterLogin()
     @Test
