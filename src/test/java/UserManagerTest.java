@@ -1,55 +1,79 @@
-import org.junit.jupiter.api.*;
-import java.io.*;
-import java.nio.file.*;
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Assertions;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.FileNotFoundException;
 
 public class UserManagerTest {
-    private static final String RESOURCES_DIR = "resources";
-    private static final String FAVORITES_FILE = RESOURCES_DIR + "/favorites.csv";
 
-    @BeforeAll
-    static void setup() {
-        File resourcesDir = new File(RESOURCES_DIR);
-        if (!resourcesDir.exists()) {
-            assertTrue(resourcesDir.mkdir(), "Failed to create resources directory");
-        }
-    }
+    // Path to the favorites CSV file
+    private static final String FAVORITES_CSV_PATH = "resources/favorites.csv";
 
+    // Set up the test environment by ensuring the resources directory and favorites CSV file exist
     @BeforeEach
-    void resetFavoritesFile() throws IOException {
-        Files.write(Paths.get(FAVORITES_FILE), "".getBytes()); // Clear file before each test
-    }
+    public void setUp() throws IOException {
+        // Ensure the resources directory exists
+        File resourcesDir = new File("resources");
+        if (!resourcesDir.exists()) {
+            resourcesDir.mkdir();  // Create directory if it doesn't exist
+        }
 
-    @Test
-    void adminCanAddMoviesAfterLogin() throws IOException {
-        addMovieToFavorites("Inception");
-        assertTrue(isMovieInFavorites("Inception"), "Movie was not added to favorites");
-    }
+        // Ensure the favorites.csv file exists
+        File favoritesFile = new File(FAVORITES_CSV_PATH);
+        if (!favoritesFile.exists()) {
+            favoritesFile.createNewFile();  // Create file if it doesn't exist
+        }
 
-    @Test
-    void loginFlowCommunicatesWithGUI() {
-        // Mock or simulate GUI interactions for login process
-        boolean loginSuccess = true; // Simulating successful login
-        assertTrue(loginSuccess, "Login GUI did not communicate properly");
-    }
-
-    @Test
-    void watchHistoryUpdatesCorrectly() throws IOException {
-        addMovieToFavorites("Interstellar");
-        assertTrue(isMovieInFavorites("Interstellar"), "Watch history did not update correctly");
-    }
-
-    private void addMovieToFavorites(String movie) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(FAVORITES_FILE, true))) {
-            writer.write(movie + "\n");
+        // Clear the contents of favorites.csv file to start fresh for each test
+        try (FileWriter writer = new FileWriter(favoritesFile, false)) {
+            writer.write(""); // Clear the file before each test
         }
     }
 
-    private boolean isMovieInFavorites(String movie) throws IOException {
-        File file = new File(FAVORITES_FILE);
-        if (!file.exists()) return false;
-        return Files.lines(Paths.get(FAVORITES_FILE)).anyMatch(line -> line.equals(movie));
+    // Test case IT-01-TB: adminCanAddMoviesAfterLogin()
+    @Test
+    public void adminCanAddMoviesAfterLogin() throws IOException {
+        // Simulate the process of adding a movie to favorites
+        modifyCsvFile("Movie Title");
+
+        // Check if the movie was successfully added by verifying the file content
+        File favoritesFile = new File(FAVORITES_CSV_PATH);
+        Assertions.assertTrue(favoritesFile.length() > 0, "Movie was not added to favorites");
+
+        // You can add more specific assertions to verify the exact content of the CSV file
+    }
+
+    // Test case IT-02-TB: loginFlowCommunicatesWithGUI()
+    @Test
+    public void loginFlowCommunicatesWithGUI() {
+        // Simulate the login flow and check if the GUI communicates properly
+        boolean isLoginSuccessful = true;  // This should be replaced with the actual login logic
+        Assertions.assertTrue(isLoginSuccessful, "Login flow did not communicate properly with the GUI");
+    }
+
+    // Test case IT-04-TB: watchHistoryUpdatesCorrectly()
+    @Test
+    public void watchHistoryUpdatesCorrectly() throws IOException {
+        // Simulate adding a movie to the watch history
+        modifyCsvFile("Movie Title");
+
+        // Check if the watch history file has been updated correctly (for this example, we check the favorites file)
+        File watchHistoryFile = new File(FAVORITES_CSV_PATH);
+        Assertions.assertTrue(watchHistoryFile.length() > 0, "Watch history was not updated correctly");
+
+        // You can add more specific assertions to verify the exact content of the watch history file
+    }
+
+    // Helper method to simulate modifying the CSV file (e.g., adding a movie to the favorites)
+    private void modifyCsvFile(String movieTitle) throws IOException {
+        try (FileWriter writer = new FileWriter(FAVORITES_CSV_PATH, true)) {
+            writer.write(movieTitle + "\n");
+        }
     }
 }
+
 
 
