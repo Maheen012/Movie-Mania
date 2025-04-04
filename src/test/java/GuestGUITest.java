@@ -20,7 +20,7 @@ public class GuestGUITest {
 
     @BeforeEach
     void setUp() {
-        // Initialize the managers and GuestGUI
+        // Initialize the managers and GuestGUI before each test
         movieManager = new MovieManager();
         userManager = new UserManager();
         guestGUI = new GuestGUI();
@@ -29,14 +29,18 @@ public class GuestGUITest {
 
     @Test
     void testGuestCanViewMovies() {
-        // Guest should be able to view the movie catalog without exceptions
+        // SYSTEM TEST:
+        // Ensures that a guest can view the movie catalog without any exceptions.
+        // Involves GuestGUI interacting with MovieViewer, MovieManager, and UserManager.
         assertDoesNotThrow(() -> guestGUI.displayMovies(),
                 "GuestGUI should be able to display movies without errors");
     }
 
     @Test
     void testGuestCannotAccessWatchHistory() {
-        // Guest should not have access to watch history
+        // UNIT TEST:
+        // Validates that calling getWatchHistory() throws the expected exception,
+        // ensuring restricted access for guests to watch history.
         Exception exception = assertThrows(UnsupportedOperationException.class, () -> {
             guestGUI.getWatchHistory();
         }, "GuestGUI should not allow access to watch history");
@@ -46,7 +50,9 @@ public class GuestGUITest {
 
     @Test
     void testGuestCannotAccessFavorites() {
-        // Guest should not have access to favorites list
+        // UNIT TEST:
+        // Validates that calling getFavorites() throws the expected exception,
+        // ensuring restricted access for guests to the favorites list.
         Exception exception = assertThrows(UnsupportedOperationException.class, () -> {
             guestGUI.getFavorites();
         }, "GuestGUI should not allow access to favorites");
