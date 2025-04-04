@@ -1,5 +1,11 @@
+<p align="center">
+  
 # Movie Mania
 
+  
+![image](https://github.com/user-attachments/assets/562e570c-260a-430b-b0ef-6f475f6af498)
+
+</p>
 Movie Mania is a GUI-based application that allows users to manage and interact with a collection of movies. Users can sign up, sign in, track watch history, manage their favorites list, and search movies. Admins have special privileges to add, update and delete movies from the catalogue. If users don't want to sign up, they can view our catalogue by logging in as a guest.
 
 ---
