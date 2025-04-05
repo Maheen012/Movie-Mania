@@ -5,6 +5,8 @@
 ![Bash Script](https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/javafx-%23FF0000.svg?style=for-the-badge&logo=javafx&logoColor=white)
+![CSV](https://img.shields.io/badge/Data-CSV-blue?style=for-the-badge&logo=file)
+
 <p align="center">
   
 ![image](https://github.com/user-attachments/assets/562e570c-260a-430b-b0ef-6f475f6af498)
