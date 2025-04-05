@@ -15,6 +15,7 @@
 ![Feature](https://img.shields.io/badge/Feature-User%20FavouritesList-red?style=for-the-badge)
 ![Feature](https://img.shields.io/badge/Feature-Movie%20Catalogue-blue?style=for-the-badge)
 ![Feature](https://img.shields.io/badge/Feature-Search+%20Filter-teal?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-User%20Signup-blueviolet?style=for-the-badge)
 
 
 <p align="center">
