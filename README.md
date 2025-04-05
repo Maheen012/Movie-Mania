@@ -4,7 +4,16 @@
 ![Bash Script](https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
 ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
 ![JavaFX](https://img.shields.io/badge/javafx-%23FF0000.svg?style=for-the-badge&logo=javafx&logoColor=white)
-![CSV](https://img.shields.io/badge/Data-CSV-blue?style=for-the-badge&logo=file)
+![CSV](https://img.shields.io/badge/Data-CSV-pink?style=for-the-badge&logo=file)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge)
+![Tests](https://img.shields.io/badge/Tests-Passing-blue?style=for-the-badge&logo=checkmarx)
+![Team](https://img.shields.io/badge/Team-4%20Contributors-purple?style=for-the-badge&logo=github)
+![Feature](https://img.shields.io/badge/Feature-Login%20System-blueviolet?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-Admin%20Controls-orange?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-Guest%20Login-yellow?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-User%20WatchHistory-orange?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-User%20FavouritesList-orange?style=for-the-badge)
+
 
 <p align="center">
   
