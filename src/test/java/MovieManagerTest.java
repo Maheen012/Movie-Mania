@@ -2,73 +2,111 @@ import org.example.controller.MovieManager;
 import org.example.model.Movie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 class MovieManagerTest {
 
-    private MovieManager movieManager;
+    // Unit Tests
+    @Test
+    void unitTest_getMoviesInitiallyEmpty() {
+        MovieManager manager = new MovieManager();
+        assertTrue(manager.getMovies().isEmpty());
+    }
+
+    @Test
+    void unitTest_getMovieByIdNotFound() {
+        MovieManager manager = new MovieManager();
+        assertNull(manager.getMovieById(999));
+    }
+
+    @Test
+    void unitTest_addAndRetrieveMovie() {
+        MovieManager manager = new MovieManager();
+        Movie testMovie = new Movie(1, "Test", 2023, "Cast", 8.0, "Genre", "Desc", "img.jpg");
+        manager.getMovies().add(testMovie);
+
+        assertEquals(testMovie, manager.getMovieById(1));
+    }
+
+    // Integration Tests
+    @TempDir
+    Path tempDir;
+    private File testCsvFile;
 
     @BeforeEach
-    void setUp() {
-        movieManager = new MovieManager();
+    void setupIntegrationTest() throws IOException {
+        testCsvFile = tempDir.resolve("movies.csv").toFile();
+        String header = "Movie ID,Title,Year,Main Cast,Rating,Genre,Description,Cover Image Path\n";
+        String data = "1,Inception,2010,Leonardo DiCaprio,8.8,Sci-Fi,A thief who steals corporate secrets,inception.jpg\n";
+        Files.write(testCsvFile.toPath(), (header + data).getBytes());
     }
 
     @Test
-    void testInitialMovieListIsEmpty() {
-        assertTrue(movieManager.getMovies().isEmpty(), "Movie list should be initially empty.");
+    void integrationTest_readAndSaveMovies() throws IOException {
+        MovieManager manager = new MovieManager() {
+            @Override
+            public File getMovieFilePath() {
+                return testCsvFile;
+            }
+        };
+
+        manager.readMovies();
+        assertEquals(1, manager.getMovies().size());
+
+        manager.getMovies().add(new Movie(2, "New Movie", 2023, "Cast", 7.5, "Genre", "Desc", "img.jpg"));
+        manager.saveMovies();
+
+        // Verify by reading again
+        MovieManager newManager = new MovieManager() {
+            @Override
+            public File getMovieFilePath() {
+                return testCsvFile;
+            }
+        };
+        newManager.readMovies();
+        assertEquals(2, newManager.getMovies().size());
+    }
+
+    // System Tests
+    @Test
+    void systemTest_fullWorkflow() {
+        // Setup - use actual file from resources
+        MovieManager manager = new MovieManager();
+        manager.readMovies();
+        int initialCount = manager.getMovies().size();
+
+        // Create and save
+        Movie newMovie = new Movie(999, "System Test", 2023, "Test Cast", 7.0, "Test", "Test", "test.jpg");
+        manager.getMovies().add(newMovie);
+        manager.saveMovies();
+
+        // Verify
+        MovieManager verifyManager = new MovieManager();
+        verifyManager.readMovies();
+        assertEquals(initialCount + 1, verifyManager.getMovies().size());
+        assertEquals("System Test", verifyManager.getMovieById(999).getTitle());
+
+        // Cleanup
+        assertTrue(verifyManager.deleteMovieById(999));
     }
 
     @Test
-    void testAddMovie() {
-        Movie movie = new Movie(1, "Inception", 2010, "Leonardo DiCaprio", 8.8, "Sci-Fi", "A mind-bending thriller.", "images/Inception.jpg");
-        movieManager.getMovies().add(movie);
-        assertEquals(1, movieManager.getMovies().size(), "Movie list should contain one movie.");
-        assertEquals(movie, movieManager.getMovies().get(0), "The added movie should match the expected movie.");
-    }
+    void systemTest_fileOperations() {
+        MovieManager manager = new MovieManager();
+        File movieFile = manager.getMovieFilePath();
 
-    @Test
-    void testGetMovieById_Found() {
-        Movie movie = new Movie(1, "Inception", 2010, "Leonardo DiCaprio", 8.8, "Sci-Fi", "A mind-bending thriller.", "images/Inception.jpg");
-        movieManager.getMovies().add(movie);
-        assertEquals(movie, movieManager.getMovieById(1), "Should return the correct movie.");
-    }
-
-    @Test
-    void testGetMovieById_NotFound() {
-        assertNull(movieManager.getMovieById(999), "Should return null for a non-existent movie.");
-    }
-
-    @Test
-    void testGetMovieFilePath_NotNull() {
-        File movieFilePath = movieManager.getMovieFilePath();
-        assertNotNull(movieFilePath, "Movie file path should not be null.");
-        assertTrue(movieFilePath.exists(), "Movie file should exist in the resources folder.");
-    }
-
-    @Test
-    void testReadMovies() {
-        // Ensure the movies.csv file exists in the resources folder
-        File movieFile = movieManager.getMovieFilePath();
-        assertNotNull(movieFile, "Movie file should not be null.");
-        assertTrue(movieFile.exists(), "Movie file should exist in the resources folder.");
-
-        // Call the readMovies method
-        movieManager.readMovies();
-
-        // Verify the movies were added
-        List<Movie> movies = movieManager.getMovies();
-        assertFalse(movies.isEmpty(), "Movie list should not be empty after reading movies.");
-
-        // Verify specific movies (if known)
-        Movie firstMovie = movies.get(0);
-        assertEquals("Inception", firstMovie.getTitle(), "First movie should be Inception.");
-        assertEquals(2010, firstMovie.getYear(), "Year of the first movie should be 2010.");
+        assertNotNull(movieFile);
+        assertTrue(movieFile.exists());
+        assertTrue(movieFile.canRead());
+        assertTrue(movieFile.canWrite());
     }
 }
