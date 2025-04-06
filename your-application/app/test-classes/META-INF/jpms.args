@@ -1,0 +1,4 @@
+--patch-module
+Movie.Mania=_
+--add-reads
+Movie.Mania=ALL-UNNAMED

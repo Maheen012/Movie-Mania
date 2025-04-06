@@ -1,0 +1,11 @@
+org\example\controller\UserManager.class
+org\example\controller\MovieManager.class
+org\example\view\GuestGUI.class
+org\example\model\Movie.class
+module-info.class
+org\example\Main.class
+org\example\view\UserGUI.class
+org\example\view\AdminGUI.class
+org\example\view\MovieViewer.class
+org\example\model\User.class
+org\example\view\LoginGUI.class

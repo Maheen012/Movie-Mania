@@ -191,5 +191,5 @@ public class LoginGUITest extends ApplicationTest {
             assertTrue(stage.isShowing(), "GUI should transition correctly for admin, user, and guest logins.");
         });
     }
-    
+
 }
