@@ -48,6 +48,12 @@ public class AdminGUI extends Application {
         Button btnViewMovies = new Button("View Movies");
         Button btnLogout = new Button("Logout");
 
+        //new
+        title.setId("title");
+        btnAddMovie.setId("btnAddMovie");
+        btnViewMovies.setId("btnViewMovies");
+        btnLogout.setId("btnLogout");
+
         btnAddMovie.setOnAction(e -> showAddMovieScreen());
         btnViewMovies.setOnAction(e -> {
             Platform.runLater(() -> {
@@ -91,7 +97,7 @@ public class AdminGUI extends Application {
         txtGenre.setPromptText("Genre");
         TextArea txtDescription = new TextArea();
         txtDescription.setPromptText("Description");
-
+        
         Label lblImage = new Label("Upload Cover Image:");
         Button btnUploadImage = new Button("Choose Image");
         Label lblImagePath = new Label("No image selected");
