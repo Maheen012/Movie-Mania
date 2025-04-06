@@ -50,12 +50,8 @@ cd Movie-Mania
 ```
 
 ### 2. Run the Application
-1. Navigate to the file in your local folder
-2. Double-click on the **"build"** file to start the application.
-
-### 3. Run the Tests
-1. Navigate to the file in your local folder
-2. Double-click on the **"test"** file to run the tests.
+1. Navigate to the **"your-application"** folder in your local folder
+2. Double-click on the **"your-application"** file to start the application.
 
 ## Interact with the Application
 
