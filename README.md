@@ -101,6 +101,8 @@ Users have access to personalized features like watch history, favorites, and ca
 ### Guest Access
 Guests have limited access to the system and can only browse the movie catalog. Guests can simply click the **Login as Guest** button on the main page and then they'll automatically be redirected to our movie catalogue for browsing movies.
 
+---
+
 ## How the Code is Organized in Our Repository
 
 The project is structured into three main components:
