@@ -51,7 +51,7 @@ public class UserManager {
      *
      * @return the file object representing the UserFavorites.csv file
      */
-    private File getFavoritesFilePath() {
+    public File getFavoritesFilePath() {
         // Get the file path from resources
         URL getPathURL = getClass().getClassLoader().getResource(FAVORITES_CSV_FILE);
 
@@ -73,7 +73,7 @@ public class UserManager {
      *
      * @return the file object representing the UserWatchHistory.csv file
      */
-    private File getWatchHistoryFilePath() {
+    public File getWatchHistoryFilePath() {
         // Get the file path from resources
         URL getPathURL = getClass().getClassLoader().getResource(WATCH_HISTORY_CSV_FILE);
 
@@ -450,5 +450,3 @@ public class UserManager {
         }
     }
 }
-
-

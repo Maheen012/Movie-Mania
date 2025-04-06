@@ -1,5 +1,28 @@
-# Movie Mania
+![IntelliJ IDEA](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Markdown](https://img.shields.io/badge/markdown-%23000000.svg?style=for-the-badge&logo=markdown&logoColor=white)
+![Bash Script](https://img.shields.io/badge/bash_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
+![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![JavaFX](https://img.shields.io/badge/javafx-%23FF0000.svg?style=for-the-badge&logo=javafx&logoColor=white)
+![CSV](https://img.shields.io/badge/Data-CSV-pink?style=for-the-badge&logo=file)
+![Status](https://img.shields.io/badge/Status-Completed-brightgreen?style=for-the-badge)
+![Tests](https://img.shields.io/badge/Tests-Passing-blue?style=for-the-badge&logo=checkmarx)
+![Team](https://img.shields.io/badge/Team-4%20Contributors-purple?style=for-the-badge&logo=github)
+![Feature](https://img.shields.io/badge/Feature-Login%20System-blueviolet?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-Admin%20Controls-orange?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-Guest%20Login-yellow?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-User%20WatchHistory-pink?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-User%20FavouritesList-red?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-Movie%20Catalogue-blue?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-Search+%20Filter-teal?style=for-the-badge)
+![Feature](https://img.shields.io/badge/Feature-User%20Signup-blueviolet?style=for-the-badge)
 
+
+<p align="center">
+  
+![image](https://github.com/user-attachments/assets/562e570c-260a-430b-b0ef-6f475f6af498)
+
+</p>
 Movie Mania is a GUI-based application that allows users to manage and interact with a collection of movies. Users can sign up, sign in, track watch history, manage their favorites list, and search movies. Admins have special privileges to add, update and delete movies from the catalogue. If users don't want to sign up, they can view our catalogue by logging in as a guest.
 
 ---
@@ -21,14 +44,18 @@ Clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/Maheen012/Movie-Mania.git
+```
+```bash
 cd Movie-Mania
 ```
 
 ### 2. Run the Application
-1. Double-click on the **"build"** file to start the application.
+1. Navigate to the file in your local folder
+2. Double-click on the **"build"** file to start the application.
 
 ### 3. Run the Tests
-1. Double-click on the **"test"** file to run the tests.
+1. Navigate to the file in your local folder
+2. Double-click on the **"test"** file to run the tests.
 
 ## Interact with the Application
 
@@ -49,7 +76,7 @@ To sign in as **Admin**, use the following credentials:
 
 ---
 
-### A. Admin Access
+### Admin Access
 Admins have full control over the movie catalogue. Here's how to navigate through the application:
 
 - **Add Movie**: Click on the **Add Movie** button, input movie details, and click **Add Movie** to add the movie to the catalogue.
@@ -60,7 +87,7 @@ Admins have full control over the movie catalogue. Here's how to navigate throug
 
 ---
 
-### B. User Access
+### User Access
 Users have access to personalized features like watch history, favorites, and catalogue browsing. Here's how to navigate:
 
 - **View Movies**: Click on any movie cover in the catalogue to view its details.
@@ -71,8 +98,10 @@ Users have access to personalized features like watch history, favorites, and ca
 
 ---
 
-### C. Guest Access
+### Guest Access
 Guests have limited access to the system and can only browse the movie catalog. Guests can simply click the **Login as Guest** button on the main page and then they'll automatically be redirected to our movie catalogue for browsing movies.
+
+---
 
 ## How the Code is Organized in Our Repository
 
