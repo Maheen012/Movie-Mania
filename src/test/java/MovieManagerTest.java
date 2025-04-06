@@ -37,6 +37,29 @@ class MovieManagerTest {
         assertEquals(testMovie, manager.getMovieById(1));
     }
 
+    @Test
+    void unitTest_getMovieByIdFound() {  // NEW TEST
+        MovieManager manager = new MovieManager();
+        Movie testMovie = new Movie(1, "The Matrix", 1999, "Keanu Reeves", 8.7, 
+                                  "Sci-Fi", "A computer hacker learns the truth", "matrix.jpg");
+        manager.getMovies().add(testMovie);
+        
+        Movie found = manager.getMovieById(1);
+        assertNotNull(found);
+        assertEquals("The Matrix", found.getTitle());
+    }
+    
+    @Test
+    void unitTest_testAddMovie() {  // NEW TEST
+        MovieManager manager = new MovieManager();
+        Movie newMovie = new Movie(2, "Inception", 2010, "Leonardo DiCaprio", 8.8,
+                                 "Sci-Fi", "Dream-sharing technology", "inception.jpg");
+        
+        manager.getMovies().add(newMovie);
+        assertEquals(1, manager.getMovies().size());
+        assertEquals(newMovie, manager.getMovies().get(0));
+    }
+
     // Integration Tests
     @TempDir
     Path tempDir;
