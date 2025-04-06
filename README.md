@@ -44,14 +44,18 @@ Clone the repository to your local machine:
 
 ```bash
 git clone https://github.com/Maheen012/Movie-Mania.git
+```
+```bash
 cd Movie-Mania
 ```
 
 ### 2. Run the Application
-1. Double-click on the **"build"** file to start the application.
+1. Navigate to the file in your local folder
+2. Double-click on the **"build"** file to start the application.
 
 ### 3. Run the Tests
-1. Double-click on the **"test"** file to run the tests.
+1. Navigate to the file in your local folder
+2. Double-click on the **"test"** file to run the tests.
 
 ## Interact with the Application
 
@@ -72,7 +76,7 @@ To sign in as **Admin**, use the following credentials:
 
 ---
 
-### A. Admin Access
+### Admin Access
 Admins have full control over the movie catalogue. Here's how to navigate through the application:
 
 - **Add Movie**: Click on the **Add Movie** button, input movie details, and click **Add Movie** to add the movie to the catalogue.
@@ -83,7 +87,7 @@ Admins have full control over the movie catalogue. Here's how to navigate throug
 
 ---
 
-### B. User Access
+### User Access
 Users have access to personalized features like watch history, favorites, and catalogue browsing. Here's how to navigate:
 
 - **View Movies**: Click on any movie cover in the catalogue to view its details.
@@ -94,7 +98,7 @@ Users have access to personalized features like watch history, favorites, and ca
 
 ---
 
-### C. Guest Access
+### Guest Access
 Guests have limited access to the system and can only browse the movie catalog. Guests can simply click the **Login as Guest** button on the main page and then they'll automatically be redirected to our movie catalogue for browsing movies.
 
 ## How the Code is Organized in Our Repository
