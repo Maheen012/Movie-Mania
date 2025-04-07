@@ -54,6 +54,7 @@ cd Movie-Mania
 #### Option 1: Windows Batch File
 1. Navigate to the Movie-Mania folder in your local repository
 2. Double-click on the **"build"** file to start the application.
+3. Double-click on the **"test"** file to run the tests.
 
 #### Option 2: Mac/Linux Shell Script
 To make the executable, run the following command:
