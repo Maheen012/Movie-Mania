@@ -70,7 +70,7 @@ Then, start the application with:
 
 ### Sign Up:
 - Enter a unique username and password.
-- Click **Sign Up** to register.
+- Click **Create Account** to register.
 
 ### Sign In:
 To sign in as **User**:
