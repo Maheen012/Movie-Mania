@@ -60,6 +60,10 @@ To make the executable, run the following command:
 ```bash
 chmod +x run.sh
 ```
+Then, start the application with:
+```bash
+./run.sh
+```
 
 ## Interact with the Application
 
