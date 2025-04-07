@@ -48,7 +48,7 @@ public class AdminGUI extends Application {
         Button btnViewMovies = new Button("View Movies");
         Button btnLogout = new Button("Logout");
 
-        //new
+        // For styling or testing IDs
         title.setId("title");
         btnAddMovie.setId("btnAddMovie");
         btnViewMovies.setId("btnViewMovies");
@@ -97,10 +97,11 @@ public class AdminGUI extends Application {
         txtGenre.setPromptText("Genre");
         TextArea txtDescription = new TextArea();
         txtDescription.setPromptText("Description");
-        
+
         Label lblImage = new Label("Upload Cover Image:");
         Button btnUploadImage = new Button("Choose Image");
         Label lblImagePath = new Label("No image selected");
+
         btnUploadImage.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Choose Cover Image");
@@ -110,10 +111,18 @@ public class AdminGUI extends Application {
             File selectedFile = fileChooser.showOpenDialog(stage);
             if (selectedFile != null) {
                 String imageName = nextMovieId + "_" + selectedFile.getName();
-                String destinationPath = "target/classes/images/" + imageName;
+
+                //  Save to classpath-accessible resources folder
+                File destDir = new File("src/main/resources/images/");
+                if (!destDir.exists()) {
+                    destDir.mkdirs();
+                }
+
+                String destinationPath = "src/main/resources/images/" + imageName;
+
                 try {
                     Files.copy(selectedFile.toPath(), Paths.get(destinationPath), StandardCopyOption.REPLACE_EXISTING);
-                    lblImagePath.setText("images/" + imageName);
+                    lblImagePath.setText("images/" + imageName); // classpath-relative
                 } catch (IOException ex) {
                     ex.printStackTrace();
                     showAlert("Error", "Failed to upload image.");
