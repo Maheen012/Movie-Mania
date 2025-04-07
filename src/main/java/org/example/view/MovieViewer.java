@@ -35,17 +35,11 @@ public class MovieViewer {
 
     private ImageView resizeImage(String imagePath, int width, int height) {
         try {
-            if (imagePath == null || imagePath.isEmpty()) {
-                System.err.println("No image selected");
-                return getDefaultImageView(width, height);
-            }
-
             InputStream inputStream = getClass().getResourceAsStream("/" + imagePath);
             if (inputStream == null) {
-                System.err.println("Image not found in classpath: " + imagePath);
+                System.err.println("Image not found: " + imagePath);
                 return getDefaultImageView(width, height);
             }
-
             Image image = new Image(inputStream);
             ImageView imageView = new ImageView(image);
             imageView.setFitWidth(width);
@@ -58,23 +52,11 @@ public class MovieViewer {
     }
 
     private ImageView getDefaultImageView(int width, int height) {
-        try {
-            InputStream defaultStream = getClass().getResourceAsStream("/images/default-cover.jpg"); // Put this in resources/images
-            Image image = (defaultStream != null)
-                    ? new Image(defaultStream)
-                    : new Image("https://via.placeholder.com/150x200.png?text=No+Image");
-
-            ImageView defaultImageView = new ImageView(image);
-            defaultImageView.setFitWidth(width);
-            defaultImageView.setFitHeight(height);
-            return defaultImageView;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ImageView(); // fallback fallback
-        }
+        ImageView defaultImageView = new ImageView(new Image(getClass().getResourceAsStream("/default-cover.jpg")));
+        defaultImageView.setFitWidth(width);
+        defaultImageView.setFitHeight(height);
+        return defaultImageView;
     }
-
-
 
     public void showMovieTitlesScreen() {
         Stage movieTitlesStage = new Stage();

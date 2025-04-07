@@ -131,9 +131,9 @@ public class UserManager {
         }
         return false;
     }
-
     /**
      * Saves a new user's credentials (username and password) to the CSV file.
+     * Ensures each entry is written on a new line.
      *
      * @param username the username to save
      * @param password the password to save
@@ -145,20 +145,23 @@ public class UserManager {
         boolean fileExists = userFile.exists();
 
         if (isUsernameTaken(username)) {
-            return; // Don't save if the username is already taken
+            return; // Skip if username exists
         }
 
-        try (CSVWriter writer = new CSVWriter(new FileWriter(userFile, true),
-                CSVWriter.DEFAULT_SEPARATOR,
-                CSVWriter.NO_QUOTE_CHARACTER, // Avoid unnecessary quotes
+        try (CSVWriter writer = new CSVWriter(
+                new FileWriter(userFile, true),  // Append mode
+                CSVWriter.DEFAULT_SEPARATOR,    // Comma separator
+                CSVWriter.NO_QUOTE_CHARACTER,   // No quotes
                 CSVWriter.DEFAULT_ESCAPE_CHARACTER,
-                CSVWriter.DEFAULT_LINE_END)) {
+                "\n"  // Explicitly set line ending
+        )) {
+            // Write header if file is new
             if (!fileExists) {
                 String[] header = {"Username", "Password"};
                 writer.writeNext(header);
             }
 
-            // **Ensure correct formatting of username and password**
+            // Write user data (trimmed)
             String[] userData = {username.trim(), password.trim()};
             writer.writeNext(userData);
 
