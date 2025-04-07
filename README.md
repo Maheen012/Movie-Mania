@@ -50,8 +50,16 @@ cd Movie-Mania
 ```
 
 ### 2. Run the Application
-1. Navigate to the **"your-application"** folder in your local folder
-2. Double-click on the **"your-application"** file to start the application.
+
+#### Option 1: Windows Batch File
+1. Navigate to the Movie-Mania folder in your local repository
+2. Double-click on the **"build"** file to start the application.
+
+#### Option 2: Mac/Linux Shell Script
+To make the executable, run the following command:
+```bash
+chmod +x run.sh
+```
 
 ## Interact with the Application
 
