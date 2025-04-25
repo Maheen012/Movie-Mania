@@ -27,6 +27,17 @@ Movie Mania is a GUI-based application that allows users to manage and interact 
 
 ---
 
+## Project Team Roles
+| Name                      | Role                  |
+|---------------------------|------------------------|
+| Ruqiyah Azim              | Project Manager        |
+| Samia Irfan               | Technical Manager      |
+| Matthew Loeff             | Front End Lead         |
+| Maheen Mohammad Alim      | Back End Lead          |
+| All                       | Software Quality Leads |
+
+---
+
 ## Prerequisites
 
 Before running the application, ensure you have the following installed:
