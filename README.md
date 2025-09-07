@@ -123,6 +123,16 @@ Guests have limited access to the system and can only browse the movie catalog. 
 
 ---
 
+## UI Preview
+
+### View Movies UI
+![Home Screen](UI/ViewMovies.png)
+
+### View Movie Details UI
+![Movie Details](UI/Admin2.png)
+
+---
+
 ## How the Code is Organized in Our Repository
 
 The project is structured into three main components:
